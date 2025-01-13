@@ -36,6 +36,8 @@ class SettingsRequestDTO
     protected ?string $summAiUserEmail = null;
     protected ?string $selectedAltTextAiLanguage = null;
     protected ?string $selectedSdModel = null;
+    protected ?array $newsContentTypes = null;
+    protected ?array $availableNewsContentTypes = null;
 
     /**
      * @var array <string, string>|null
@@ -165,5 +167,21 @@ class SettingsRequestDTO
     public function setSelectedSdModel(?string $selectedSdModel): void
     {
         $this->selectedSdModel = $selectedSdModel;
+    }
+
+    public function getNewsContentTypes(): ?array {
+        return $this->newsContentTypes;
+    }
+
+    public function setNewsContentTypes(?array $newsContentTypes): void {
+        $this->newsContentTypes = $newsContentTypes;
+    }
+    public function getAvailableNewsContentTypes(): ?array
+    {
+        return $this->availableNewsContentTypes;
+    }
+    public function setAvailableNewsContentTypes(?array $availableNewsContentTypes): void
+    {
+        $this->availableNewsContentTypes = $availableNewsContentTypes;
     }
 }

@@ -49,6 +49,12 @@ class TtContent extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      */
     protected $sorting;
 
+    /**
+     * @var int
+     */
+    protected $relatedNews;
+
+
     public function getUid(): int
     {
         return $this->uid;
@@ -107,5 +113,13 @@ class TtContent extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
     public function setSorting(int $sorting): void
     {
         $this->sorting = $sorting;
+    }
+
+    public function getRelatedNews(): int {
+        return $this->relatedNews;
+    }
+
+    public function setRelatedNews(int $relatedNews): void {
+        $this->relatedNews = $relatedNews;
     }
 }

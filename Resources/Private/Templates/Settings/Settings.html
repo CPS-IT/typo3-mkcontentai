@@ -260,6 +260,40 @@
                                     key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelSetEmail"/>
                             </label>
                             <f:form.textfield class="form-control" property="summAiUserEmail" value=""/>
+                            <f:translate
+                                key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelCurrentlyStored"/>
+                            News record content types:
+                            <f:for each="{settingsRequestDTO.newsContentTypes}" as="selectedCType">
+                                {selectedCType},
+                            </f:for>
+                            <br/>
+                            <label>
+                                <f:translate
+                                    key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelSetNewsContentTypes"/>
+                            </label>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="panelsStayOpen-headingSeven">
+                                    <button class="btn btn-primary" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseSeven" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseSeven">
+                                        Show all available content types
+                                    </button>
+                                </h2>
+                                <div id="panelsStayOpen-collapseSeven" class="accordion-collapse collapse"
+                                     aria-labelledby="panelsStayOpen-headingSeven">
+                                    <div class="accordion-body">
+                                        <f:for each="{settingsRequestDTO.availableNewsContentTypes}" as="cTypeNews">
+                                            <div class="form-check">
+                                                <f:form.checkbox property="newsContentTypes"
+                                                                 value="{cTypeNews}"
+                                                                 class="form-check-input"
+                                                                 multiple="1"/>
+                                                <label class="form-check-label">{cTypeNews}</label>
+                                            </div>
+                                        </f:for>
+                                    </div>
+                                </div>
+                            </div>
                             <br/>
                             <f:form.submit class="btn btn-primary" value='<f:translate key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelSubmit"/>'/>
                         </div>

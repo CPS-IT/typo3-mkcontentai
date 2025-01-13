@@ -28,6 +28,10 @@ class SettingsDTO
 
     private ?string $userEmail;
 
+    private ?array $newsContentTypes;
+
+    private ?array $availableNewsContentTypes;
+
     public function __construct(BaseClient $client)
     {
         $this->client = $client;
@@ -121,14 +125,33 @@ class SettingsDTO
         return $settingsDto;
     }
 
-    public static function createSummAiClient(?string $apiKey, ?string $userEmail): SettingsDTO
+    public static function createSummAiClient(?string $apiKey, ?string $userEmail, ?array $newsContentTypes, ?array $availableNewsContentTypes): SettingsDTO
     {
         $client = AiClientUtility::createSummAiClient();
         $settingsDto = new SettingsDTO($client);
         $settingsDto->setApiKey($apiKey);
         $settingsDto->setUserEmail($userEmail);
         $settingsDto->setValidatedApiKey($settingsDto->getClient()->validateApiKey());
-
+        $settingsDto->setNewsContentTypes($newsContentTypes);
+        $settingsDto->setAvailableNewsContentTypes($availableNewsContentTypes);
         return $settingsDto;
     }
+    public function getNewsContentTypes(): ?array
+    {
+        return $this->newsContentTypes;
+    }
+    public function setNewsContentTypes(?array $newsContentTypes): void
+    {
+        $this->newsContentTypes = $newsContentTypes;
+    }
+
+    public function getAvailableNewsContentTypes(): ?array
+    {
+        return $this->availableNewsContentTypes;
+    }
+    public function setAvailableNewsContentTypes(?array $availableNewsContentTypes): void
+    {
+        $this->availableNewsContentTypes = $availableNewsContentTypes;
+    }
+
 }

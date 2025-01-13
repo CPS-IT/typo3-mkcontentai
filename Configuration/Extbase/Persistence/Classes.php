@@ -25,6 +25,9 @@ return [
             'sorting' => [
                 'fieldName' => 'sorting',
             ],
+            'relatedNews' => [
+                'fieldName' => 'tx_news_related_news',
+            ],
         ],
     ],
     DMK\MkContentAi\Domain\Model\AltTextLog::class => [
@@ -54,5 +57,8 @@ return [
                 'fieldName' => 'crdate',
             ],
         ],
+    ],
+    DMK\MkContentAi\Domain\Model\News::class => [
+        'tableName' => 'tx_news_domain_model_news',
     ],
 ];

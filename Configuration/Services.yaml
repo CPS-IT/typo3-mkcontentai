@@ -27,6 +27,13 @@ services:
               method: handleEvent
               event: TYPO3\CMS\Filelist\Event\ProcessFileListActionsEvent
 
+    DMK\MkContentAi\Backend\EventListener\NewsRecordEventListener:
+        public: true
+        tags:
+            - name: event.listener
+              method: modifyRecordListActions
+              event: TYPO3\CMS\Recordlist\Event\ModifyRecordListRecordActionsEvent
+
     DMK\MkContentAi\Command\AltTextGenerateCommand:
         tags:
             -

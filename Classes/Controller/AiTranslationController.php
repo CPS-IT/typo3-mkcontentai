@@ -17,8 +17,9 @@ declare(strict_types=1);
 
 namespace DMK\MkContentAi\Controller;
 
+use DMK\MkContentAi\Backend\Hooks\NewsContentHandler;
 use DMK\MkContentAi\Backend\Hooks\PageContentHandler;
-use DMK\MkContentAi\Service\AiTranslationPageContentService;
+use DMK\MkContentAi\Service\AiTranslationContentService;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Http\RedirectResponse;
@@ -30,57 +31,85 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class AiTranslationController extends BaseController
 {
-    private AiTranslationPageContentService $aiTranslationService;
+    private AiTranslationContentService $aiTranslationService;
     private PageContentHandler $pageContentHandler;
+    private NewsContentHandler $newsContentHandler;
 
-    public function __construct(AiTranslationPageContentService $aiTranslationService, PageContentHandler $pageContentHandler, PageRenderer $pageRenderer)
+    public function __construct(AiTranslationContentService $aiTranslationService, PageContentHandler $pageContentHandler, NewsContentHandler $newsContentHandler, PageRenderer $pageRenderer)
     {
         $this->aiTranslationService = $aiTranslationService;
         $this->pageContentHandler = $pageContentHandler;
+        $this->newsContentHandler = $newsContentHandler;
         $pageRenderer->addCssFile('EXT:mkcontentai/Resources/Public/Css/base.css');
     }
 
-    public function translateContentEasyAction(int $uid = 0, string $inputTextType = 'plain_text', string $targetLanguageType = 'easy', string $separator = 'hyphen'): ResponseInterface
+    public function translateContentEasyAction(int $uid = 0, string $table = 'tt_content', string $inputTextType = 'plain_text', string $targetLanguageType = 'easy', string $separator = 'hyphen'): ResponseInterface
     {
-        return $this->translateContent($uid, $inputTextType, $targetLanguageType, $separator);
+        return $this->translateContent($uid, $table, $inputTextType, $targetLanguageType, $separator);
     }
 
-    public function translateContentPlainAction(int $uid = 0, string $inputTextType = 'plain_text', string $targetLanguageType = 'plain', string $separator = 'hyphen'): ResponseInterface
+    public function translateContentPlainAction(int $uid = 0, string $table = 'tt_content', string $inputTextType = 'html', string $targetLanguageType = 'easy', string $separator = 'hyphen'): ResponseInterface
     {
-        return $this->translateContent($uid, $inputTextType, $targetLanguageType, $separator);
+        return $this->translateContent($uid, $table, $inputTextType, $targetLanguageType, $separator);
     }
 
-    private function translateContent(int $uid, string $inputTextType, string $targetLanguageType, string $separator): ResponseInterface
+    private function translateContent(int $uid, string $table, string $inputTextType, string $targetLanguageType, string $separator): ResponseInterface
     {
-        $record = $this->aiTranslationService->getRecordToTranslate($uid);
-
-        if (null === $record) {
-            $response = new ForwardResponse('filelist');
-            $translatedMessage = LocalizationUtility::translate('labelErrorRecordSelected', 'mkcontentai') ?? '';
-
-            $this->addFlashMessage($translatedMessage, '', AbstractMessage::ERROR);
-
-            return $response->withControllerName('AiImage');
+        if($table === 'tx_news_domain_model_news') {
+            $record = $this->aiTranslationService->getNewsRecordToTranslate($uid);
+        } else {
+            $record = $this->aiTranslationService->getRecordToTranslate($uid);
         }
 
-        $bodyTextToTranslate = $record->getBodytext();
+        if(!$record) {
+            return $this->processError('labelErrorRecordSelected');
+        }
+
+        if($table === 'tx_news_domain_model_news') {
+            $bodyTextToTranslate = $this->aiTranslationService->getNewsContentToTranslate($uid);
+            if (!$bodyTextToTranslate) return $this->processError('labelErrorNewsContent');
+        } else {
+            $bodyTextToTranslate = $record->getBodytext();
+        }
 
         try {
-            $translatedText = $this->aiTranslationService->getTranslation($bodyTextToTranslate, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
-            $this->pageContentHandler->copyContentRecord($record->getUid(), $record->getPid(), $translatedText->translated_text, $targetLanguageType);
+            if($table === 'tx_news_domain_model_news') {
+                $title = $record->getTitle();
+                $teaser = $record->getTeaser();
+                if($title) $translatedTitle = $this->aiTranslationService->getTranslation($title, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
+                if($teaser) $translatedTeaser = $this->aiTranslationService->getTranslation($record->getTeaser(), $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
+                $translatedText = $this->aiTranslationService->getTranslation($bodyTextToTranslate, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
+                $this->newsContentHandler->createNewsRecord(
+                    $record,
+                    $translatedTitle->translated_text ?? '',
+                    $translatedTeaser->translated_text ?? '',
+                    $translatedText->translated_text,
+                    $targetLanguageType
+                );
+            } else {
+                $translatedText = $this->aiTranslationService->getTranslation($bodyTextToTranslate, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
+                $this->pageContentHandler->copyContentRecord($record->getUid(), $record->getPid(), $translatedText->translated_text, $targetLanguageType);
+            }
         } catch (\Exception $e) {
             $this->addFlashMessage($e->getMessage(), '', AbstractMessage::ERROR);
-
             return $this->handleResponse();
         }
 
-        return $this->buildUrl($record->getPid());
+        return $this->buildUrl($record->getPid(), $table);
     }
 
-    private function buildUrl(int $recordPid): ResponseInterface
+    private function processError(string $msgKey): ResponseInterface
     {
+        $response = new ForwardResponse('filelist');
+        $translatedMessage = LocalizationUtility::translate($msgKey, 'mkcontentai') ?? '';
+        $this->addFlashMessage($translatedMessage, '', AbstractMessage::ERROR);
+        return $response->withControllerName('AiImage');
+    }
+    private function buildUrl(int $recordPid, $table): ResponseInterface
+    {
+        $routeName = $table === 'tx_news_domain_model_news' ? 'web_list' : 'web_layout';
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-        $recordUrl = $uriBuilder->buildUriFromRoute('web_layout', [
+        $recordUrl = $uriBuilder->buildUriFromRoute($routeName, [
             'id' => $recordPid,
         ]);
 

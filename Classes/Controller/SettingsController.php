@@ -24,6 +24,7 @@ use DMK\MkContentAi\Service\SiteLanguageService;
 use DMK\MkContentAi\Utility\PermissionsUtility;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -70,13 +71,14 @@ class SettingsController extends BaseController
         $stableDiffusionApiKey = $settingsRequestDTO->getStableDiffusionAiApiValue();
         $stableDiffusion = SettingsDTO::createStableDiffusionClient($stableDiffusionApiKey);
         $altTextAi = SettingsDTO::createAltTextClient($settingsRequestDTO->getAltTextAiApiValue());
-        $summAi = SettingsDTO::createSummAiClient($settingsRequestDTO->getSummAiApiValue(), $settingsRequestDTO->getSummAiUserEmail());
+        $summAi = SettingsDTO::createSummAiClient($settingsRequestDTO->getSummAiApiValue(), $settingsRequestDTO->getSummAiUserEmail(), $settingsRequestDTO->getNewsContentTypes(), $settingsRequestDTO->getAvailableNewsContentTypes());
         /** @var SummAiClient $summAiClient */
         $summAiClient = $summAi->getClient();
 
         try {
             $this->validateApiCalls($openAi, $stabilityAi, $stableDiffusion, $altTextAi, $summAi);
             $summAiClient->setEmail($summAiClient->checkEmailFromRequest($settingsRequestDTO->getSummAiUserEmail()), $validateSumAiEmail);
+            $summAiClient->setNewsContentTypes($summAiClient->checkNewsContentTypesFromRequest($settingsRequestDTO->getNewsContentTypes()));
             $modelList = $stableDiffusion->getClient()->modelList();
         } catch (\Exception $e) {
             $this->addFlashMessage($e->getMessage(), '', AbstractMessage::ERROR, false);
@@ -108,6 +110,8 @@ class SettingsController extends BaseController
             [
                 'none' => ['model_id' => ''],
             ], $modelList));
+        $settingsRequestDTO->setAvailableNewsContentTypes($this->extractNewsContentTypes());
+        $settingsRequestDTO->setNewsContentTypes($summAiClient->getNewsContentTypes());
         try {
             $this->view->assignMultiple(
                 [
@@ -176,5 +180,14 @@ class SettingsController extends BaseController
         $stableDiffusion->validateClientApiKey();
         $altTextAi->validateClientApiKey();
         $summAi->validateClientApiKey();
+    }
+
+    private function extractNewsContentTypes(): array
+    {
+        $availableNewsContentTypes = [];
+        foreach ($GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'] as $cType) {
+            $availableNewsContentTypes[] = $cType[1];
+        }
+        return $availableNewsContentTypes;
     }
 }

@@ -18,16 +18,8 @@ declare(strict_types=1);
 namespace DMK\MkContentAi\Domain\Repository;
 
 use TYPO3\CMS\Extbase\Persistence\Repository;
+use TYPO3\CMS\Extbase\Persistence\QueryInterface;
 
-class TtContentRepository extends Repository
+class NewsRepository extends Repository
 {
-    public function findRelatedNews(int $newsUid): array
-    {
-        $queryBuilder = $this->createQuery();
-        $queryBuilder->getQuerySettings()->setRespectStoragePage(false);
-        $queryBuilder->matching(
-            $queryBuilder->equals('tx_news_related_news', $newsUid)
-        );
-        return $queryBuilder->execute(true);
-    }
 }

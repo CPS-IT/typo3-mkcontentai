@@ -42,6 +42,7 @@ class SummAiClient extends BaseClient implements ClientInterface
     {
         $this->getApiKey();
         $this->getUserEmail();
+        $this->getNewsContentTypes();
         $this->client = HttpClient::create();
     }
 
@@ -187,5 +188,28 @@ class SummAiClient extends BaseClient implements ClientInterface
     public function checkEmailFromRequest(?string $summAiUserEmail): string
     {
         return null === $summAiUserEmail ? $this->getUserEmail() : $summAiUserEmail;
+    }
+
+    public function checkNewsContentTypesFromRequest(?array $newsContentTypes): array
+    {
+        return null === $newsContentTypes ? $this->getNewsContentTypes() : $newsContentTypes;
+    }
+
+    public function getNewsContentTypes(): ?array
+    {
+        $registry = $this->getRegistry();
+        $class = $this->getClass();
+        return ($registry->get($class, 'newsContentTypes')) ?? [];
+    }
+
+    public function setNewsContentTypes(array $newsContentTypes): void
+    {
+        try {
+            $registry = $this->getRegistry();
+            $class = $this->getClass();
+            $registry->set($class, 'newsContentTypes', $newsContentTypes);
+        } catch (\Exception $e) {
+            return;
+        }
     }
 }

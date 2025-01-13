@@ -67,10 +67,18 @@ Image to video currently works only with StabilityAI. This functionality introdu
 ![](Documentation/Images/ImageToVideo/Image-to-video-result-v12.png)
 
 ### SUMM AI API integration
+#### Page Translation
 SUMM AI is a tool designed to improve accessibility by transforming complex texts into both Leichte Sprache (Easy Language) and Plain Language. These formats are tailored to make content more accessible, ensuring that it can be easily understood by a broader audience, including individuals with cognitive disabilities or those who may struggle with reading comprehension.
 The SUMM AI API is now implemented and ready to transform content using tt_content texts within the MKContentAI extension.
 
 ![](Documentation/Images/SummAiAPI/summ-ai-example.png)
+
+#### News Translation
+SUMM AI is supporting translation of news records. [News extension](https://extensions.typo3.org/extension/news) must be installed and configured to use this feature. The extension is using the same API as described above to translate content types within the news record which were enabled in extension [settings](#settings). 
+
+During translation new News record is created with translated title, teaser and bodytext. Created record must be enabled manually. New added key in tx_news_domain_model_news `tx_mkcontentai_original_news_uid` can then be used to link original news record (e.g. for switch between original and simplified language).
+
+![](Documentation/Images/SummAiAPI/summ-ai-news-example.png)
 
 ### Settings
 The "Settings" section allows you to configure the AI platforms and APIs that the extension should use, as well as additional options for Stable Diffusion. Specifically, in the "Settings" section, you can:
@@ -81,6 +89,7 @@ The "Settings" section allows you to configure the AI platforms and APIs that th
 - Adjust any other settings or parameters that the extension provides.
 - Access Control (ACL) for settings tab to restrict access based on user roles or permissions is possible via configuring usergroup record.
 - Access Control (ACL) for "AI generation of image by text prompt" button in tt_content: media field to restrict access based on user roles or permissions is possible via configuring usergroup record.
+- For News Extension: select Content Types of News record which should be translated into easy language.
 
 These settings can be adjusted according to your preferences and needs. It's important to ensure that the API keys are entered correctly to enable the extension to connect to the AI platforms and generate images successfully.
 
