@@ -250,8 +250,10 @@
                                 SUMM AI API
                                 <f:translate
                                     key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelKeyValue"/>
-                                :</label>
+                                :
+                            </label>
                             <f:form.textfield class="form-control" property="summAiApiValue" value=""/>
+                            <br/><br/>
                             <f:translate
                                 key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelCurrentlyStored"/>
                             SUMM AI API email: {settingsRequestDTO.summAiUserEmail}<br/>
@@ -260,6 +262,41 @@
                                     key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelSetEmail"/>
                             </label>
                             <f:form.textfield class="form-control" property="summAiUserEmail" value=""/>
+                            <br/><br/>
+                            <f:form.checkbox class="form-check-input" property="summAiDevMode" value="true" checked="{settingsRequestDTO.summAiDevMode}"/>
+                            <label class="form-check-label">
+                                <f:translate key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelSummAiDevMode"/>
+                            </label>
+                            <br/><br/>
+                            <h5>News Records Translation with SUMM AI</h5>
+                            <f:form.checkbox class="form-check-input" property="summAiDisclaimer" value="true" checked="{settingsRequestDTO.summAiDisclaimer}"/>
+                            <label class="form-check-label">
+                                <f:translate key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelSummAiDisclaimer"/>
+                            </label>
+                            <br/><br/>
+                            <f:form.checkbox class="form-check-input" property="summAiTranslatedRecordLink" value="true" checked="{settingsRequestDTO.summAiTranslatedRecordLink}"/>
+                            <label class="form-check-label">
+                                <f:translate key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelSummAiTranslatedRecordLink"/>
+                            </label>
+                            <br/><br/>
+                            <f:translate
+                                key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelCurrentlyStored"/>
+                            URL path: {settingsRequestDTO.newsUrlPath}<br/>
+                            <label>
+                                <f:translate
+                                    key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelNewsUrlPath"/>
+                            </label>
+                            <f:form.textfield class="form-control" property="newsUrlPath" value=""/>
+                            <br/><br/>
+                            <f:translate
+                                key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelCurrentlyStored"/>
+                            Content element UID to append to translated news record: {settingsRequestDTO.summAiAppendedContentUid}<br/>
+                            <label>
+                                <f:translate
+                                    key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelSetNewsTranslationSpecificContent"/>
+                            </label>
+                            <f:form.textfield class="form-control" property="summAiAppendedContentUid" type="number" value=""/>
+                            <br/><br/>
                             <f:translate
                                 key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelCurrentlyStored"/>
                             News record content types:

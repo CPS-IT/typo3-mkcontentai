@@ -79,12 +79,20 @@ class AiTranslationController extends BaseController
                 if($title) $translatedTitle = $this->aiTranslationService->getTranslation($title, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
                 if($teaser) $translatedTeaser = $this->aiTranslationService->getTranslation($record->getTeaser(), $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
                 $translatedText = $this->aiTranslationService->getTranslation($bodyTextToTranslate, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
+                $appendedContentUid = $this->aiTranslationService->getSummAiAppendedContentUid();
+                $showDisclaimer = $this->aiTranslationService->getSummAiDisclaimer();
+                $showLinkInOriginalRecord = $this->aiTranslationService->getSummAiTranslatedRecordLink();
+                $urlPath = $this->aiTranslationService->getNewsUrlPath();
                 $this->newsContentHandler->createNewsRecord(
                     $record,
                     $translatedTitle->translated_text ?? '',
                     $translatedTeaser->translated_text ?? '',
                     $translatedText->translated_text,
-                    $targetLanguageType
+                    $targetLanguageType,
+                    $appendedContentUid,
+                    $showDisclaimer,
+                    $showLinkInOriginalRecord,
+                    $urlPath
                 );
             } else {
                 $translatedText = $this->aiTranslationService->getTranslation($bodyTextToTranslate, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
@@ -122,7 +130,6 @@ class AiTranslationController extends BaseController
     {
         if (null === $this->moduleTemplateFactory) {
             $translatedMessage = LocalizationUtility::translate('labelErrorModuleTemplateFactory', 'mkcontentai') ?? '';
-
             throw new \Exception($translatedMessage, 1623345720);
         }
 

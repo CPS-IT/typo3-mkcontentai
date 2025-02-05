@@ -38,6 +38,12 @@ class SettingsRequestDTO
     protected ?string $selectedSdModel = null;
     protected ?array $newsContentTypes = null;
     protected ?array $availableNewsContentTypes = null;
+    protected ?int $summAiAppendedContentUid = null;
+    protected ?bool $summAiDevMode = null;
+    protected ?bool $summAiDisclaimer = null;
+    protected ?bool $summAiTranslatedRecordLink = null;
+
+    protected ?string $newsUrlPath = null;
 
     /**
      * @var array <string, string>|null
@@ -176,12 +182,65 @@ class SettingsRequestDTO
     public function setNewsContentTypes(?array $newsContentTypes): void {
         $this->newsContentTypes = $newsContentTypes;
     }
+
     public function getAvailableNewsContentTypes(): ?array
     {
         return $this->availableNewsContentTypes;
     }
+
     public function setAvailableNewsContentTypes(?array $availableNewsContentTypes): void
     {
         $this->availableNewsContentTypes = $availableNewsContentTypes;
     }
+
+    public function getSummAiAppendedContentUid(): ?int
+    {
+        return $this->summAiAppendedContentUid;
+    }
+
+    public function setSummAiAppendedContentUid(?int $summAiAppendedContentUid): void
+    {
+        $this->summAiAppendedContentUid = $summAiAppendedContentUid;
+    }
+
+    public function getSummAiDevMode(): ?bool
+    {
+        return $this->summAiDevMode;
+    }
+
+    public function setSummAiDevMode(?bool $summAiDevMode): void
+    {
+        $this->summAiDevMode = $summAiDevMode;
+    }
+
+    public function getSummAiDisclaimer(): ?bool
+    {
+        return $this->summAiDisclaimer;
+    }
+
+    public function setSummAiDisclaimer(?bool $summAiDisclaimer): void
+    {
+        $this->summAiDisclaimer = $summAiDisclaimer;
+    }
+
+    public function getSummAiTranslatedRecordLink(): ?bool
+    {
+        return $this->summAiTranslatedRecordLink;
+    }
+
+    public function setSummAiTranslatedRecordLink(?bool $summAiTranslatedRecordLink): void
+    {
+        $this->summAiTranslatedRecordLink = $summAiTranslatedRecordLink;
+    }
+
+    public function getNewsUrlPath()
+    {
+        return $this->newsUrlPath;
+    }
+
+    public function setNewsUrlPath(?string $newsUrlPath): void
+    {
+        $this->newsUrlPath = $newsUrlPath;
+    }
 }
+

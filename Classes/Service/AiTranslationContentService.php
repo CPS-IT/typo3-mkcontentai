@@ -69,4 +69,24 @@ class AiTranslationContentService
         }
         return $bodytext;
     }
+
+    public function getSummAiAppendedContentUid(): ?int
+    {
+        return $this->summAiClient->getSummAiAppendedContentUid();
+    }
+
+    public function getSummAiDisclaimer(): bool
+    {
+        return $this->summAiClient->getSummAiDisclaimer();
+    }
+
+    public function getSummAiTranslatedRecordLink(): bool
+    {
+        return $this->summAiClient->getSummAiTranslatedRecordLink();
+    }
+
+    public function getNewsUrlPath()
+    {
+        return $this->summAiClient->getNewsUrlPath();
+    }
 }

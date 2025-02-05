@@ -219,6 +219,24 @@
             <trans-unit id="labelFirstPage" resname="labelFirstPage">
                 <source>First Page</source>
             </trans-unit>
+            <trans-unit id="labelSetNewsContentTypes" resname="labelSetNewsContentTypes">
+                <source>News record content types for text translation</source>
+            </trans-unit>
+            <trans-unit id="labelSetNewsTranslationSpecificContent" resname="labelSetNewsTranslationSpecificContent">
+                <source>Set specific content to append to translated news record (uid)</source>
+            </trans-unit>
+            <trans-unit id="labelSummAiDevMode" resname="labelSummAiDevMode">
+                <source>Create translation in testing mode.</source>
+            </trans-unit>
+            <trans-unit id="labelSummAiDisclaimer" resname="labelSummAiDisclaimer">
+                <source>Show disclaimer that text was created with AI.</source>
+            </trans-unit>
+            <trans-unit id="labelSummAiTranslatedRecordLink" resname="labelSummAiTranslatedRecordLink">
+                <source>Show link to translated news record in original record.</source>
+            </trans-unit>
+            <trans-unit id="labelNewsUrlPath" resname="labelNewsUrlPath">
+                <source>Set URL middle-path for translated news record (e.g. /news/easy-language/).</source>
+            </trans-unit>
 		</body>
 	</file>
 </xliff>

@@ -32,6 +32,16 @@ class SettingsDTO
 
     private ?array $availableNewsContentTypes;
 
+    private ?int $summAiAppendedContentUid;
+
+    private ?bool $summAiDevMode;
+
+    private ?bool $summAiDisclaimer;
+
+    private ?bool $summAiTranslatedRecordLink;
+
+    private ?string $newsUrlPath;
+
     public function __construct(BaseClient $client)
     {
         $this->client = $client;
@@ -125,7 +135,16 @@ class SettingsDTO
         return $settingsDto;
     }
 
-    public static function createSummAiClient(?string $apiKey, ?string $userEmail, ?array $newsContentTypes, ?array $availableNewsContentTypes): SettingsDTO
+    public static function createSummAiClient(
+        ?string $apiKey,
+        ?string $userEmail,
+        ?array $newsContentTypes,
+        ?array $availableNewsContentTypes,
+        ?int $appendedContentUid,
+        ?bool $summAiDevMode,
+        ?bool $summAiDisclaimer,
+        ?bool $summAiTranslatedRecordLink
+    ): SettingsDTO
     {
         $client = AiClientUtility::createSummAiClient();
         $settingsDto = new SettingsDTO($client);
@@ -134,6 +153,10 @@ class SettingsDTO
         $settingsDto->setValidatedApiKey($settingsDto->getClient()->validateApiKey());
         $settingsDto->setNewsContentTypes($newsContentTypes);
         $settingsDto->setAvailableNewsContentTypes($availableNewsContentTypes);
+        $settingsDto->setSummAiAppendedContentUid($appendedContentUid);
+        $settingsDto->setSummAiDevMode($summAiDevMode);
+        $settingsDto->setSummAiDisclaimer($summAiDisclaimer);
+        $settingsDto->setSummAiTranslatedRecordLink($summAiTranslatedRecordLink);
         return $settingsDto;
     }
     public function getNewsContentTypes(): ?array
@@ -154,4 +177,54 @@ class SettingsDTO
         $this->availableNewsContentTypes = $availableNewsContentTypes;
     }
 
+    public function getSummAiAppendedContentUid(): ?int
+    {
+        return $this->summAiAppendedContentUid;
+    }
+
+    public function setSummAiAppendedContentUid(?int $summAiAppendedContentUid): void
+    {
+        $this->summAiAppendedContentUid = $summAiAppendedContentUid;
+    }
+
+    public function getSummAiDevMode(): ?bool
+    {
+        return $this->summAiDevMode;
+    }
+
+    public function setSummAiDevMode(?bool $summAiDevMode): void
+    {
+        $this->summAiDevMode = $summAiDevMode;
+    }
+
+    public function getSummAiDisclaimer(): ?bool
+    {
+        return $this->summAiDisclaimer;
+    }
+
+    public function setSummAiDisclaimer(?bool $summAiDisclaimer): void
+    {
+        $this->summAiDisclaimer = $summAiDisclaimer;
+    }
+
+    public function getSummAiTranslatedRecordLink(): ?bool
+    {
+        return $this->summAiTranslatedRecordLink;
+    }
+
+    public function setSummAiTranslatedRecordLink(?bool $summAiTranslatedRecordLink): void
+    {
+        $this->summAiTranslatedRecordLink = $summAiTranslatedRecordLink;
+    }
+
+    public function getNewsUrlPath(): ?string
+    {
+        return $this->newsUrlPath;
+    }
+
+    public function setNewsUrlPath(?string $newsUrlPath): void
+    {
+        $this->newsUrlPath = $newsUrlPath;
+    }
 }
+

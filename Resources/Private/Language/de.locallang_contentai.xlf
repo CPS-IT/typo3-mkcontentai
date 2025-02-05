@@ -289,6 +289,30 @@
             	<source>Transform into plain language</source>
             	<target>In Einfache Sprache transformieren</target>
             </trans-unit>
+            <trans-unit id="labelSetNewsContentTypes" resname="labelSetNewsContentTypes">
+                <source>News record content types for text translation</source>
+                <target>Content-Types für Textumwandlung für News-Records</target>
+            </trans-unit>
+            <trans-unit id="labelSetNewsTranslationSpecificContent" resname="labelSetNewsTranslationSpecificContent">
+                <source>Set specific content to append to translated news record (uid)</source>
+                <target>Legen Sie einen spezifischen Inhalt fest, der an die umgewandelten News-Records angehängt werden soll (uid)</target>
+            </trans-unit>
+            <trans-unit id="labelSummAiDevMode" resname="labelSummAiDevMode">
+                <source>Create translation in testing mode.</source>
+                <target>Text-Übersetzungen im Test-Modus erstellen.</target>
+            </trans-unit>
+            <trans-unit id="labelSummAiDisclaimer" resname="labelSummAiDisclaimer">
+                <source>Show disclaimer that text was created with AI.</source>
+                <target>Hinweis anzeigen, dass der Text mit KI erstellt wurde.</target>
+            </trans-unit>
+            <trans-unit id="labelSummAiTranslatedRecordLink" resname="labelSummAiTranslatedRecordLink">
+                <source>Show link to translated news record in original record.</source>
+                <target>Link zum übersetzten News-Record im Original-Record anzeigen.</target>
+            </trans-unit>
+            <trans-unit id="labelNewsUrlPath" resname="labelNewsUrlPath">
+                <source>Set URL middle-path for translated news record (e.g. /news/easy-language/).</source>
+                <target>Legen Sie den URL-Pfad für die umgewandelten News-Records fest (z.B. /meldungen/leichte-sprache/).</target>
+            </trans-unit>
 		</body>
 	</file>
 </xliff>

@@ -71,7 +71,16 @@ class SettingsController extends BaseController
         $stableDiffusionApiKey = $settingsRequestDTO->getStableDiffusionAiApiValue();
         $stableDiffusion = SettingsDTO::createStableDiffusionClient($stableDiffusionApiKey);
         $altTextAi = SettingsDTO::createAltTextClient($settingsRequestDTO->getAltTextAiApiValue());
-        $summAi = SettingsDTO::createSummAiClient($settingsRequestDTO->getSummAiApiValue(), $settingsRequestDTO->getSummAiUserEmail(), $settingsRequestDTO->getNewsContentTypes(), $settingsRequestDTO->getAvailableNewsContentTypes());
+        $summAi = SettingsDTO::createSummAiClient(
+            $settingsRequestDTO->getSummAiApiValue(),
+            $settingsRequestDTO->getSummAiUserEmail(),
+            $settingsRequestDTO->getNewsContentTypes(),
+            $settingsRequestDTO->getAvailableNewsContentTypes(),
+            $settingsRequestDTO->getSummAiAppendedContentUid(),
+            $settingsRequestDTO->getSummAiDevMode(),
+            $settingsRequestDTO->getSummAiDisclaimer(),
+            $settingsRequestDTO->getSummAiTranslatedRecordLink()
+        );
         /** @var SummAiClient $summAiClient */
         $summAiClient = $summAi->getClient();
 
@@ -79,6 +88,11 @@ class SettingsController extends BaseController
             $this->validateApiCalls($openAi, $stabilityAi, $stableDiffusion, $altTextAi, $summAi);
             $summAiClient->setEmail($summAiClient->checkEmailFromRequest($settingsRequestDTO->getSummAiUserEmail()), $validateSumAiEmail);
             $summAiClient->setNewsContentTypes($summAiClient->checkNewsContentTypesFromRequest($settingsRequestDTO->getNewsContentTypes()));
+            $summAiClient->setSummAiAppendedContentUid($summAiClient->checkAppendedContentUidFromRequest($settingsRequestDTO->getSummAiAppendedContentUid()));
+            $summAiClient->setSummAiDevMode($summAiClient->checkDevModeFromRequest($settingsRequestDTO->getSummAiDevMode()));
+            $summAiClient->setSummAiDisclaimer($summAiClient->checkSummAiDisclaimerFromRequest($settingsRequestDTO->getSummAiDisclaimer()));
+            $summAiClient->setSummAiTranslatedRecordLink($summAiClient->checkSummAiTranslatedRecordLinkFromRequest($settingsRequestDTO->getSummAiTranslatedRecordLink()));
+            $summAiClient->setNewsUrlPath($summAiClient->checkNewsUrlPathFromRequest($settingsRequestDTO->getNewsUrlPath()));
             $modelList = $stableDiffusion->getClient()->modelList();
         } catch (\Exception $e) {
             $this->addFlashMessage($e->getMessage(), '', AbstractMessage::ERROR, false);
@@ -112,6 +126,11 @@ class SettingsController extends BaseController
             ], $modelList));
         $settingsRequestDTO->setAvailableNewsContentTypes($this->extractNewsContentTypes());
         $settingsRequestDTO->setNewsContentTypes($summAiClient->getNewsContentTypes());
+        $settingsRequestDTO->setSummAiAppendedContentUid($summAiClient->getSummAiAppendedContentUid());
+        $settingsRequestDTO->setSummAiDevMode($summAiClient->getSummAiDevMode());
+        $settingsRequestDTO->setSummAiDisclaimer($summAiClient->getSummAiDisclaimer());
+        $settingsRequestDTO->setSummAiTranslatedRecordLink($summAiClient->getSummAiTranslatedRecordLink());
+        $settingsRequestDTO->setNewsUrlPath($summAiClient->getNewsUrlPath());
         try {
             $this->view->assignMultiple(
                 [
@@ -191,3 +210,4 @@ class SettingsController extends BaseController
         return $availableNewsContentTypes;
     }
 }
+

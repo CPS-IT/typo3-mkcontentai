@@ -159,6 +159,15 @@
 			<trans-unit id="labelImageSaved" resname="labelImageSaved">
             	<source>Image generated for text prompt "%s" by %s. Saved at: %s.</source>
             </trans-unit>
+            <trans-unit id="labelAiDisclaimer" resname="labelAiDisclaimer">
+                <source>This text has been generated with the help of Artificial Intelligence.</source>
+            </trans-unit>
+            <trans-unit id="labelTranslationLinkEasy" resname="labelTranslationLinkEasy">
+                <source>This text is also available in easy language.</source>
+            </trans-unit>
+            <trans-unit id="labelTranslationLinkPlain" resname="labelTranslationLinkPlain">
+                <source>This text is also available in plain language.</source>
+            </trans-unit>
 		</body>
 	</file>
 </xliff>

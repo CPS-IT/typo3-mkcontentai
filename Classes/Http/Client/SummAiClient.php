@@ -43,6 +43,11 @@ class SummAiClient extends BaseClient implements ClientInterface
         $this->getApiKey();
         $this->getUserEmail();
         $this->getNewsContentTypes();
+        $this->getSummAiAppendedContentUid();
+        $this->getSummAiDevMode();
+        $this->getSummAiDisclaimer();
+        $this->getSummAiTranslatedRecordLink();
+        $this->getNewsUrlPath();
         $this->client = HttpClient::create();
     }
 
@@ -93,10 +98,7 @@ class SummAiClient extends BaseClient implements ClientInterface
                 'json' => $formData,
             ]
         );
-
-        $response = $this->validateResponse($response->getContent(false));
-
-        return $response;
+        return $this->validateResponse($response->getContent(false));
     }
 
     public function getAuthorizationHeader(): string
@@ -127,6 +129,7 @@ class SummAiClient extends BaseClient implements ClientInterface
                 'input_text_type' => $inputTextType,
                 'output_language_level' => $outputLanguageLvl,
                 'separator' => $separator,
+                'is_test' => $this->getSummAiDevMode(),
             ];
     }
 
@@ -195,6 +198,26 @@ class SummAiClient extends BaseClient implements ClientInterface
         return null === $newsContentTypes ? $this->getNewsContentTypes() : $newsContentTypes;
     }
 
+    public function checkAppendedContentUidFromRequest(?int $summAiAppendedContentUid): int
+    {
+        return null === $summAiAppendedContentUid ? $this->getSummAiAppendedContentUid() : $summAiAppendedContentUid;
+    }
+
+    public function checkDevModeFromRequest(?bool $summAiDevMode): bool
+    {
+        return null === $summAiDevMode ? $this->getSummAiDevMode() : $summAiDevMode;
+    }
+
+    public function checkSummAiDisclaimerFromRequest(?bool $summAiDisclaimer): bool
+    {
+        return null === $summAiDisclaimer ? $this->getSummAiDisclaimer() : $summAiDisclaimer;
+    }
+
+    public function checkSummAiTranslatedRecordLinkFromRequest(?bool $summAiTranslatedRecordLink): bool
+    {
+        return null === $summAiTranslatedRecordLink ? $this->getSummAiTranslatedRecordLink() : $summAiTranslatedRecordLink;
+    }
+
     public function getNewsContentTypes(): ?array
     {
         $registry = $this->getRegistry();
@@ -211,5 +234,100 @@ class SummAiClient extends BaseClient implements ClientInterface
         } catch (\Exception $e) {
             return;
         }
+    }
+
+    public function getSummAiAppendedContentUid(): ?int
+    {
+        $registry = $this->getRegistry();
+        $class = $this->getClass();
+        return $registry->get($class, 'summAiAppendedContentUid') ?? -1;
+    }
+
+    public function setSummAiAppendedContentUid(int $summAiAppendedContentUid): void
+    {
+        try {
+            $registry = $this->getRegistry();
+            $class = $this->getClass();
+            $registry->set($class, 'summAiAppendedContentUid', $summAiAppendedContentUid);
+        } catch (\Exception $e) {
+            return;
+        }
+    }
+
+    public function getSummAiDevMode(): bool
+    {
+        $registry = $this->getRegistry();
+        $class = $this->getClass();
+        return $registry->get($class, 'summAiDevMode') ?? false;
+    }
+
+    public function setSummAiDevMode(bool $summAiDevMode): void
+    {
+        try {
+            $registry = $this->getRegistry();
+            $class = $this->getClass();
+            $registry->set($class, 'summAiDevMode', $summAiDevMode);
+        } catch (\Exception $e) {
+            return;
+        }
+    }
+
+    public function getSummAiDisclaimer(): bool
+    {
+        $registry = $this->getRegistry();
+        $class = $this->getClass();
+        return $registry->get($class, 'summAiDisclaimer') ?? true;
+    }
+
+    public function setSummAiDisclaimer(bool $summAiDisclaimer): void
+    {
+        try {
+            $registry = $this->getRegistry();
+            $class = $this->getClass();
+            $registry->set($class, 'summAiDisclaimer', $summAiDisclaimer);
+        } catch (\Exception $e) {
+            return;
+        }
+    }
+
+    public function getSummAiTranslatedRecordLink(): bool
+    {
+        $registry = $this->getRegistry();
+        $class = $this->getClass();
+        return $registry->get($class, 'summAiTranslatedRecordLink') ?? true;
+    }
+
+    public function setSummAiTranslatedRecordLink(bool $summAiTranslatedRecordLink): void
+    {
+        try {
+            $registry = $this->getRegistry();
+            $class = $this->getClass();
+            $registry->set($class, 'summAiTranslatedRecordLink', $summAiTranslatedRecordLink);
+        } catch (\Exception $e) {
+            return;
+        }
+    }
+
+    public function getNewsUrlPath(): string
+    {
+        $registry = $this->getRegistry();
+        $class = $this->getClass();
+        return $registry->get($class, 'newsUrlPath') ?? '';
+    }
+
+    public function setNewsUrlPath(string $newsUrlPath): void
+    {
+        try {
+            $registry = $this->getRegistry();
+            $class = $this->getClass();
+            $registry->set($class, 'newsUrlPath', $newsUrlPath);
+        } catch (\Exception $e) {
+            return;
+        }
+    }
+
+    public function checkNewsUrlPathFromRequest(?string $getNewsUrlPath)
+    {
+        return null === $getNewsUrlPath ? $this->getNewsUrlPath() : $getNewsUrlPath;
     }
 }
