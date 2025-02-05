@@ -168,6 +168,9 @@
             <trans-unit id="labelTranslationLinkPlain" resname="labelTranslationLinkPlain">
                 <source>This text is also available in plain language.</source>
             </trans-unit>
+            <trans-unit id="labelErrorNewsContent" resname="labelErrorNewsContent">
+                <source>News record you try to translate doesn't have selected content types.</source>
+            </trans-unit>
 		</body>
 	</file>
 </xliff>

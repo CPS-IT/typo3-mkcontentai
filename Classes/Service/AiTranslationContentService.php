@@ -57,7 +57,7 @@ class AiTranslationContentService
         return $this->newsRepository->findByUid($recordUid);
     }
 
-    public function getNewsContentToTranslate(int $recordUid): string
+    public function getNewsContentToTranslate(int $recordUid): ?string
     {
         $ttContents = $this->ttContentRepository->findRelatedNews($recordUid);
         $cTypesValid = $this->summAiClient->getNewsContentTypes();
