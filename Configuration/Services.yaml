@@ -57,6 +57,11 @@ services:
               method: beforeEventDeleted
               event: TYPO3\CMS\Core\Resource\Event\BeforeFileDeletedEvent
 
+    DMK\MkContentAi\Backend\EventListener\AdditionalNewsColumnsEventListener:
+        tags:
+            - name: event.listener
+              identifier: 'additionalNewsColumns'
+
     DMK\MkContentAi\Utility\PermissionsUtility:
         calls:
             - method: 'injectContext'
