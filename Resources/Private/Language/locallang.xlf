@@ -162,11 +162,8 @@
             <trans-unit id="labelAiDisclaimer" resname="labelAiDisclaimer">
                 <source>This text has been generated with the help of Artificial Intelligence.</source>
             </trans-unit>
-            <trans-unit id="labelTranslationLinkEasy" resname="labelTranslationLinkEasy">
-                <source>This text is also available in easy language.</source>
-            </trans-unit>
-            <trans-unit id="labelTranslationLinkPlain" resname="labelTranslationLinkPlain">
-                <source>This text is also available in plain language.</source>
+            <trans-unit id="labelAiDisclaimer2" resname="labelAiDisclaimer2">
+                <source>Certified translater in easy language controlled the text.</source>
             </trans-unit>
             <trans-unit id="labelErrorNewsContent" resname="labelErrorNewsContent">
                 <source>News record you try to translate doesn't have selected content types.</source>

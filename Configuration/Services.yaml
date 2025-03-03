@@ -34,10 +34,14 @@ services:
               method: modifyRecordListActions
               event: TYPO3\CMS\Recordlist\Event\ModifyRecordListRecordActionsEvent
 
+    DMK\MkContentAi\Backend\EventListener\AdditionalNewsColumnsEventListener:
+        tags:
+            -   name: event.listener
+                identifier: 'additionalNewsColumns'
+
     DMK\MkContentAi\Command\AltTextGenerateCommand:
         tags:
-            -
-                name: console.command
+            -   name: console.command
                 command: 'mkcontentai:alt-text-generate'
                 description: 'Generate alt texts in specific directory - example: "1:/mkcontentai/openai"'
                 schedulable: true
@@ -56,11 +60,6 @@ services:
               identifier: 'beforeSysFileDeleted'
               method: beforeEventDeleted
               event: TYPO3\CMS\Core\Resource\Event\BeforeFileDeletedEvent
-
-    DMK\MkContentAi\Backend\EventListener\AdditionalNewsColumnsEventListener:
-        tags:
-            - name: event.listener
-              identifier: 'additionalNewsColumns'
 
     DMK\MkContentAi\Utility\PermissionsUtility:
         calls:
@@ -90,6 +89,13 @@ services:
 
     DMK\MkContentAi\Service\AiTranslationPageContentService:
         public: true
+
+    DMK\MkContentAi\Service\AiTranslationContentService:
+        public: true
+        arguments:
+            $summAiClient: '@DMK\MkContentAi\Http\Client\SummAiClient'
+            $ttContentRepository: '@DMK\MkContentAi\Domain\Repository\TtContentRepository'
+            $newsRepository: '@GeorgRinger\News\Domain\Repository\NewsRepository'
 
     DMK\MkContentAi\Http\Client\Action\AltTextAction:
         public: true
@@ -121,3 +127,4 @@ services:
               arguments:
                   $aiImageService: '@DMK\MkContentAi\Service\AiImageService'
         public: true
+

@@ -41,9 +41,6 @@ class SettingsRequestDTO
     protected ?int $summAiAppendedContentUid = null;
     protected ?bool $summAiDevMode = null;
     protected ?bool $summAiDisclaimer = null;
-    protected ?bool $summAiTranslatedRecordLink = null;
-
-    protected ?string $newsUrlPath = null;
 
     /**
      * @var array <string, string>|null
@@ -221,26 +218,6 @@ class SettingsRequestDTO
     public function setSummAiDisclaimer(?bool $summAiDisclaimer): void
     {
         $this->summAiDisclaimer = $summAiDisclaimer;
-    }
-
-    public function getSummAiTranslatedRecordLink(): ?bool
-    {
-        return $this->summAiTranslatedRecordLink;
-    }
-
-    public function setSummAiTranslatedRecordLink(?bool $summAiTranslatedRecordLink): void
-    {
-        $this->summAiTranslatedRecordLink = $summAiTranslatedRecordLink;
-    }
-
-    public function getNewsUrlPath()
-    {
-        return $this->newsUrlPath;
-    }
-
-    public function setNewsUrlPath(?string $newsUrlPath): void
-    {
-        $this->newsUrlPath = $newsUrlPath;
     }
 }
 

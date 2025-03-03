@@ -48,5 +48,8 @@ $GLOBALS['TYPO3_CONF_VARS']['BE']['customPermOptions']['mkcontentaiSettingsPermi
         'tt_contentImagePrompt' => [
             'LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelSettingsImageGenerationPrompt',
         ],
+        'tt_contentTextTranslation' => [
+            'LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelSettingsTextTranslation',
+        ]
     ],
 ];

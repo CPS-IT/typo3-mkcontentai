@@ -17,12 +17,10 @@ declare(strict_types=1);
 
 namespace DMK\MkContentAi\Service;
 
-use DMK\MkContentAi\Domain\Model\TtContent;
 use DMK\MkContentAi\Domain\Repository\TtContentRepository;
-use DMK\MkContentAi\Domain\Model\News;
-use DMK\MkContentAi\Domain\Repository\NewsRepository;
+use GeorgRinger\News\Domain\Repository\NewsRepository;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use DMK\MkContentAi\Http\Client\SummAiClient;
-use function _PHPStan_a3459023a\RingCentral\Psr7\str;
 
 class AiTranslationContentService
 {
@@ -34,7 +32,9 @@ class AiTranslationContentService
     {
         $this->summAiClient = $summAiClient;
         $this->ttContentRepository = $ttContentRepository;
-        $this->newsRepository = $newsRepository;
+        if (ExtensionManagementUtility::isLoaded('news')) {
+            $this->newsRepository = $newsRepository;
+        }
     }
 
     public function getTranslation(string $inputText, string $userEmail, string $inputTextType, string $targetLanguageType, string $separator): \stdClass
@@ -88,5 +88,20 @@ class AiTranslationContentService
     public function getNewsUrlPath()
     {
         return $this->summAiClient->getNewsUrlPath();
+    }
+
+    public function getNewsInternalLinkUid(int $uid): ?int
+    {
+        $record = $this->newsRepository->findByUid($uid);
+        $url = $record->getInternalurl();
+        if (empty($url)) {
+            return null;
+        }
+        $parsedUrl = parse_url($url);
+        if (!isset($parsedUrl['query'])) {
+            return null;
+        }
+        parse_str($parsedUrl['query'], $queryString);
+        return (int) $queryString['uid'];
     }
 }

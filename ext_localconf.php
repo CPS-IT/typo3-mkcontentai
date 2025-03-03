@@ -23,7 +23,7 @@ $typo3Version = GeneralUtility::makeInstance(TYPO3\CMS\Core\Information\Typo3Ver
 
 if (11 == $typo3Version->getMajorVersion()) {
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['Backend\Template\Components\ButtonBar']['getButtonsHook']['ButtonBarHook']
-    = ButtonBarHook::class.'->getButtons';
+        = ButtonBarHook::class.'->getButtons';
 }
 
 $GLOBALS['TYPO3_CONF_VARS']['BE']['ContextMenu']['ItemProviders'][1697195476] =
@@ -41,3 +41,4 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][TYPO3\CMS\Core\Resource\Event\Befo
 ];
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] = DMK\MkContentAi\Backend\Hooks\CustomDataHandler::class;
+$GLOBALS['TYPO3_CONF_VARS']['EXT']['news']['classes']['Domain/Model/News']['mkcontentai'] = 'mkcontentai';

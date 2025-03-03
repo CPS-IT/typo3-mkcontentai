@@ -57,6 +57,10 @@ class AiTranslationController extends BaseController
     {
         if($table === 'tx_news_domain_model_news') {
             $record = $this->aiTranslationService->getNewsRecordToTranslate($uid);
+            $linkedNewsUid = $this->aiTranslationService->getNewsInternalLinkUid($uid);
+            if($linkedNewsUid) {
+                $linkedRecord = $this->aiTranslationService->getNewsRecordToTranslate($linkedNewsUid);
+            }
         } else {
             $record = $this->aiTranslationService->getRecordToTranslate($uid);
         }
@@ -66,33 +70,34 @@ class AiTranslationController extends BaseController
         }
 
         if($table === 'tx_news_domain_model_news') {
-            $bodyTextToTranslate = $this->aiTranslationService->getNewsContentToTranslate($uid);
-            if (!$bodyTextToTranslate) return $this->processError('labelErrorNewsContent');
+            $bodyTextToTranslate = $this->aiTranslationService->getNewsContentToTranslate($linkedNewsUid ?? $uid);
+            if (!$bodyTextToTranslate) {
+                return $this->processError('labelErrorNewsContent');
+            }
         } else {
             $bodyTextToTranslate = $record->getBodytext();
         }
 
         try {
             if($table === 'tx_news_domain_model_news') {
-                $title = $record->getTitle();
-                $teaser = $record->getTeaser();
+                $title = ($linkedRecord ?? $record)->getTitle();
+                $teaser = ($linkedRecord ?? $record)->getTeaser();
                 if($title) $translatedTitle = $this->aiTranslationService->getTranslation($title, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
-                if($teaser) $translatedTeaser = $this->aiTranslationService->getTranslation($record->getTeaser(), $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
+                if($teaser) $translatedTeaser = $this->aiTranslationService->getTranslation($teaser, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
                 $translatedText = $this->aiTranslationService->getTranslation($bodyTextToTranslate, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
+
                 $appendedContentUid = $this->aiTranslationService->getSummAiAppendedContentUid();
                 $showDisclaimer = $this->aiTranslationService->getSummAiDisclaimer();
-                $showLinkInOriginalRecord = $this->aiTranslationService->getSummAiTranslatedRecordLink();
-                $urlPath = $this->aiTranslationService->getNewsUrlPath();
+
                 $this->newsContentHandler->createNewsRecord(
                     $record,
                     $translatedTitle->translated_text ?? '',
                     $translatedTeaser->translated_text ?? '',
-                    $translatedText->translated_text,
+                    $translatedText->translated_text ?? '',
                     $targetLanguageType,
                     $appendedContentUid,
                     $showDisclaimer,
-                    $showLinkInOriginalRecord,
-                    $urlPath
+                    $linkedNewsUid ?? null
                 );
             } else {
                 $translatedText = $this->aiTranslationService->getTranslation($bodyTextToTranslate, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);

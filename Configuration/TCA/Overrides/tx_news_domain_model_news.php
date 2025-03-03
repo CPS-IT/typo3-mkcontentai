@@ -4,15 +4,62 @@ if(TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
         'tx_news_domain_model_news',
         [
             'tx_mkcontentai_original_news_uid' => [
+                'exclude' => 0,
+                'label' => 'LLL:EXT:mkcontentai/Resources/Private/Language/locallang_db.xlf:labelOriginalUidFieldTitle',
+                'description' => 'LLL:EXT:mkcontentai/Resources/Private/Language/locallang_db.xlf:labelOriginalUidFieldDescription',
                 'config' => [
-                    'type' => 'passthrough',
+                    'type' => 'group',
+                    'allowed' => 'tx_news_domain_model_news',
+                    'maxitems' => 1,
+                    'size' => 1,
+                    'readOnly' => true,
+                    'default' => 0,
+                    'fieldControl' => [
+                        'editPopup' => [
+                            'disabled' => true,
+                        ],
+                        'addRecord' => [
+                            'disabled' => true,
+                        ],
+                        'listModule' => [
+                            'disabled' => false,
+                        ],
+                    ]
                 ]
-            ]
+            ],
+            'tx_mkcontentai_translated_news_uid' => [
+                'exclude' => 0,
+                'label' => 'LLL:EXT:mkcontentai/Resources/Private/Language/locallang_db.xlf:labelTranslatedUidFieldTitle',
+                'description' => 'LLL:EXT:mkcontentai/Resources/Private/Language/locallang_db.xlf:labelTranslatedUidFieldDescription',
+                'config' => [
+                    'type' => 'group',
+                    'allowed' => 'tx_news_domain_model_news',
+                    'maxitems' => 1,
+                    'size' => 1,
+                    'readOnly' => true,
+                    'default' => 0,
+                    'fieldControl' => [
+                        'editPopup' => [
+                            'disabled' => true,
+                        ],
+                        'addRecord' => [
+                            'disabled' => true,
+                        ],
+                        'listModule' => [
+                            'disabled' => false,
+                        ],
+                    ]
+                ]
+            ],
         ]
     );
+
+    $newFields = 'tx_mkcontentai_original_news_uid, tx_mkcontentai_translated_news_uid';
+    $position = '--div--;MK Content AI,' . $newFields;
+
     TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
         'tx_news_domain_model_news',
-        'tx_mkcontentai_original_news_uid',
+        $position,
         '',
         ''
     );

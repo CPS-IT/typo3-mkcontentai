@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="de" datatype="plaintext" original="EXT:mkcontentai/Resources/Private/Language/locallang_db" date="2025-02-15T11:05:06Z" product-name="mkcontentai">
+		<header/>
+		<body>
+			<trans-unit id="labelOriginalUidFieldTitle" resname="labelOriginalUidFieldTitle">
+                <source>Original News UID used for translation</source>
+                <target>UID der originalen Meldung</target>
+            </trans-unit>
+            <trans-unit id="labelOriginalUidFieldDescription" resname="labelOriginalUidFieldDescription">
+                <source>News record which was used for translation, if not empty but next field is then record has a translation created with SUMM AI.</source>
+                <target>Falls dieser Feld ist nicht leer, aber nicht der nächste dann hat die Meldung eine Übersetzung in Leichter Sprache.</target>
+            </trans-unit>
+            <trans-unit id="labelTranslatedUidFieldTitle" resname="labelTranslatedUidFieldTitle">
+                <source>Translated News UID created with SUMM AI</source>
+                <target>UID der uebersetzten Meldung</target>
+            </trans-unit>
+            <trans-unit id="labelTranslatedUidFieldDescription" resname="labelTranslatedUidFieldDescription">
+                <source>News record in easy language, if not empty but previous field is  then record is a translation created with SUMM AI.</source>
+                <target>Meldung, welche mit SUMM AI aus dem Original übersetzt wurde.</target>
+            </trans-unit>
+		</body>
+	</file>
+</xliff>

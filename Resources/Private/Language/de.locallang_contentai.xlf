@@ -193,7 +193,7 @@
                  <source>Currently used model</source>
                  <target>Derzeit verwendetes Modell</target>
             </trans-unit>
-            <trans-unit id="labelAiGenerateText" resname="labelAiGenerateText">
+            <trans-unit id="labelImageGeneration" resname="labelAiGenerateText">
                  <source>AI generation of image by text prompt</source>
                  <target>AI-Erzeugung eines Bildes nach einer Textabfrage</target>
             </trans-unit>
@@ -305,13 +305,9 @@
                 <source>Show disclaimer that text was created with AI.</source>
                 <target>Hinweis anzeigen, dass der Text mit KI erstellt wurde.</target>
             </trans-unit>
-            <trans-unit id="labelSummAiTranslatedRecordLink" resname="labelSummAiTranslatedRecordLink">
-                <source>Show link to translated news record in original record.</source>
-                <target>Link zum übersetzten News-Record im Original-Record anzeigen.</target>
-            </trans-unit>
-            <trans-unit id="labelNewsUrlPath" resname="labelNewsUrlPath">
-                <source>Set URL middle-path for translated news record (e.g. /news/easy-language/).</source>
-                <target>Legen Sie den URL-Pfad für die umgewandelten News-Records fest (z.B. /meldungen/leichte-sprache/).</target>
+            <trans-unit id="labelSettingsTextTranslation" resname="labelSettingsTextTranslation">
+                <source>Enable text translation in tt_content and tx_news_domain_model_news fields</source>
+                <target>Text-Übersetzungen in tt_content und tx_news_domain_model_news Feldern aktivieren</target>
             </trans-unit>
 		</body>
 	</file>

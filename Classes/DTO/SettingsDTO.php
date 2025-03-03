@@ -38,10 +38,6 @@ class SettingsDTO
 
     private ?bool $summAiDisclaimer;
 
-    private ?bool $summAiTranslatedRecordLink;
-
-    private ?string $newsUrlPath;
-
     public function __construct(BaseClient $client)
     {
         $this->client = $client;
@@ -143,7 +139,6 @@ class SettingsDTO
         ?int $appendedContentUid,
         ?bool $summAiDevMode,
         ?bool $summAiDisclaimer,
-        ?bool $summAiTranslatedRecordLink
     ): SettingsDTO
     {
         $client = AiClientUtility::createSummAiClient();
@@ -156,7 +151,6 @@ class SettingsDTO
         $settingsDto->setSummAiAppendedContentUid($appendedContentUid);
         $settingsDto->setSummAiDevMode($summAiDevMode);
         $settingsDto->setSummAiDisclaimer($summAiDisclaimer);
-        $settingsDto->setSummAiTranslatedRecordLink($summAiTranslatedRecordLink);
         return $settingsDto;
     }
     public function getNewsContentTypes(): ?array
@@ -205,26 +199,6 @@ class SettingsDTO
     public function setSummAiDisclaimer(?bool $summAiDisclaimer): void
     {
         $this->summAiDisclaimer = $summAiDisclaimer;
-    }
-
-    public function getSummAiTranslatedRecordLink(): ?bool
-    {
-        return $this->summAiTranslatedRecordLink;
-    }
-
-    public function setSummAiTranslatedRecordLink(?bool $summAiTranslatedRecordLink): void
-    {
-        $this->summAiTranslatedRecordLink = $summAiTranslatedRecordLink;
-    }
-
-    public function getNewsUrlPath(): ?string
-    {
-        return $this->newsUrlPath;
-    }
-
-    public function setNewsUrlPath(?string $newsUrlPath): void
-    {
-        $this->newsUrlPath = $newsUrlPath;
     }
 }
 

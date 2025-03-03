@@ -3,6 +3,7 @@
 namespace DMK\MkContentAi\Backend\EventListener;
 
 use DMK\MkContentAi\ContextMenu\ContentAiTranslationProvider;
+use DMK\MkContentAi\Utility\PermissionsUtility;
 use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
@@ -33,7 +34,8 @@ class NewsRecordEventListener
     {
         $currentTable = $event->getTable();
         $identifier = $event->getRecord()['uid'];
-        if ($currentTable === 'tx_news_domain_model_news' && !$event->hasAction('translateContentPlain')) {
+        $permissionsUtility = GeneralUtility::makeInstance(PermissionsUtility::class);
+        if ($currentTable === 'tx_news_domain_model_news' && !$event->hasAction('translateContentPlain') && $permissionsUtility->userHasAccessToTextTranslationPromptButton()) {
             $itemsConfiguration = $this->contentAiTranslationProvider->getItemsConfiguration();
             if(isset($itemsConfiguration['translateContentPlain'])) {
                 $this->contentAiTranslationProvider->setContext($currentTable, $identifier);
@@ -74,3 +76,4 @@ class NewsRecordEventListener
         }
     }
 }
+

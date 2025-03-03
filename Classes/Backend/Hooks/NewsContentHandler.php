@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace DMK\MkContentAi\Backend\Hooks;
 
-use DMK\MkContentAi\Domain\Model\News;
+use GeorgRinger\News\Domain\Model\News;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
@@ -32,25 +32,22 @@ class NewsContentHandler
         string $targetLanguageType,
         ?int $appendedContentUid,
         bool $showDisclaimer,
-        bool $showLinkInOriginalRecord,
-        ?string $urlPath
+        ?int $linkedNewsUid
     ): void
     {
         $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
-        $currentTimestamp = time() + 1;
-        $fullBodyText = $bodyText . ($showDisclaimer ? '<br><br>' . LocalizationUtility::translate('labelAiDisclaimer', 'mkcontentai') : '');
-        $url = ($urlPath === '' ? '' : $urlPath) . $record->getPathSegment();
+        $fullDisclaimer = '<i>' . LocalizationUtility::translate('labelAiDisclaimer', 'mkcontentai') . '</i><br><i>' . LocalizationUtility::translate('labelAiDisclaimer2', 'mkcontentai') . '</i>';
+        $fullBodyText = $bodyText . ($showDisclaimer ? '<br><br>' . $fullDisclaimer : '');
 
         $newsRecordData = [
             'pid' => $record->getPid(),
             'title' => '(Transformed into '.$targetLanguageType.' language) '. strip_tags($title),
             'teaser' => strip_tags($teaser),
             'bodytext' => $fullBodyText,
-            'tx_mkcontentai_original_news_uid' => $record->getUid(),
-            'datetime' => $currentTimestamp,
-            'crdate' => $currentTimestamp,
-            'tstamp' => $currentTimestamp,
-            'path_segment' => $url,
+            'tx_mkcontentai_original_news_uid' => $linkedNewsUid ?? $record->getUid(),
+            'datetime' => $record->getDatetime()->getTimestamp(),
+            'crdate' => $record->getDatetime()->getTimestamp(),
+            'tstamp' => $record->getDatetime()->getTimestamp(),
         ];
 
         if ($appendedContentUid) {
@@ -64,11 +61,9 @@ class NewsContentHandler
         ];
 
         $this->executeDataHandler($dataHandler, $dataMap);
-        $newUid = $dataHandler->substNEWwithIDs['NEW_1'];
 
-        if ($showLinkInOriginalRecord) {
-            $this->updateOriginalRecord($dataHandler, $record, $url, $targetLanguageType);
-        }
+        $newUid = $dataHandler->substNEWwithIDs['NEW_1'];
+        $this->updateOriginalRecord($dataHandler, $record, $newUid);
     }
 
     private function executeDataHandler(DataHandler $dataHandler, array $map): void
@@ -77,22 +72,12 @@ class NewsContentHandler
         $dataHandler->process_datamap();
     }
 
-    private function updateOriginalRecord(DataHandler $dataHandler, News $record, string $translationSlug): void
+    private function updateOriginalRecord(DataHandler $dataHandler, News $record, int $translatedUid): void
     {
-        $siteUrl = GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
-        $translatedNewsUrl = $siteUrl . $translationSlug . '.html';
-        $linkText = sprintf(
-            '<a href="%s">%s</a>',
-            $translatedNewsUrl,
-            LocalizationUtility::translate('labelTranslationLinkEasy', 'mkcontentai')
-        );
-
-        $originalBodyText = $record->getBodytext();
-        $updatedBodyText = $linkText . '<br><br>' .  $originalBodyText;
         $originalUpdateMap = [
             'tx_news_domain_model_news' => [
                 $record->getUid() => [
-                    'bodytext' => $updatedBodyText,
+                    'tx_mkcontentai_translated_news_uid' => $translatedUid,
                 ]
             ]
         ];

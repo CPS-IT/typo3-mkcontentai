@@ -231,12 +231,10 @@
             <trans-unit id="labelSummAiDisclaimer" resname="labelSummAiDisclaimer">
                 <source>Show disclaimer that text was created with AI.</source>
             </trans-unit>
-            <trans-unit id="labelSummAiTranslatedRecordLink" resname="labelSummAiTranslatedRecordLink">
-                <source>Show link to translated news record in original record.</source>
-            </trans-unit>
-            <trans-unit id="labelNewsUrlPath" resname="labelNewsUrlPath">
-                <source>Set URL middle-path for translated news record (e.g. /news/easy-language/).</source>
+            <trans-unit id="labelSettingsTextTranslation" resname="labelSettingsTextTranslation">
+                <source>Enable text translation in tt_content and tx_news_domain_model_news fields</source>
             </trans-unit>
 		</body>
 	</file>
 </xliff>
+
