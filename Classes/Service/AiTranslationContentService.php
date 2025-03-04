@@ -80,16 +80,6 @@ class AiTranslationContentService
         return $this->summAiClient->getSummAiDisclaimer();
     }
 
-    public function getSummAiTranslatedRecordLink(): bool
-    {
-        return $this->summAiClient->getSummAiTranslatedRecordLink();
-    }
-
-    public function getNewsUrlPath()
-    {
-        return $this->summAiClient->getNewsUrlPath();
-    }
-
     public function getNewsInternalLinkUid(int $uid): ?int
     {
         $record = $this->newsRepository->findByUid($uid);

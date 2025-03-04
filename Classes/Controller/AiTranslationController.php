@@ -57,16 +57,18 @@ class AiTranslationController extends BaseController
     {
         if($table === 'tx_news_domain_model_news') {
             $record = $this->aiTranslationService->getNewsRecordToTranslate($uid);
+            if(!$record) {
+                return $this->processError('labelErrorRecordAlreadyTranslated');
+            }
             $linkedNewsUid = $this->aiTranslationService->getNewsInternalLinkUid($uid);
             if($linkedNewsUid) {
                 $linkedRecord = $this->aiTranslationService->getNewsRecordToTranslate($linkedNewsUid);
             }
         } else {
             $record = $this->aiTranslationService->getRecordToTranslate($uid);
-        }
-
-        if(!$record) {
-            return $this->processError('labelErrorRecordSelected');
+            if(!$record) {
+                return $this->processError('labelErrorRecordSelected');
+            }
         }
 
         if($table === 'tx_news_domain_model_news') {
@@ -97,7 +99,7 @@ class AiTranslationController extends BaseController
                     $targetLanguageType,
                     $appendedContentUid,
                     $showDisclaimer,
-                    $linkedNewsUid ?? null
+                    $linkedRecord ?? null
                 );
             } else {
                 $translatedText = $this->aiTranslationService->getTranslation($bodyTextToTranslate, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
@@ -144,3 +146,4 @@ class AiTranslationController extends BaseController
         return $this->htmlResponse($moduleTemplate->renderContent());
     }
 }
+

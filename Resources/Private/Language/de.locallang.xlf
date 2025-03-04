@@ -114,6 +114,10 @@
 				<source>Could not read combined image</source>
 				<target>Kombiniertes Bild konnte nicht gelesen werden</target>
 			</trans-unit>
+			<trans-unit id="labelErrorRecordAlreadyTranslated" resname="labelErrorRecordAlreadyTranslated">
+                <source>News record already has existing translation. Please delete it first to repeat translation with SUMM AI.</source>
+                <target>Der Nachrichtendatensatz hat bereits eine Übersetzung. Bitte löschen Sie diese zuerst, um die Übersetzung mit SUMM AI zu wiederholen.</target>
+            </trans-unit>
 			<trans-unit id="labelExtendedImage" resname="labelExtendedImage">
 				<source>Extended Image</source>
 				<target>Erweitertes Bild</target>
@@ -205,6 +209,14 @@
             <trans-unit id="labelAiDisclaimer2" resname="labelAiDisclaimer2">
                 <source>Certified translater in easy language controlled the text.</source>
                 <target>Ein zertifizierter Übersetzer für Leichte Sprache hat den Text geprüft.</target>
+            </trans-unit>
+            <trans-unit id="labelTranslationLinkEasy" resname="labelTranslationLinkEasy">
+                <source>This text is also available in easy language.</source>
+                <target>Diesen Text gibt es auch in Leichter Sprache.</target>
+            </trans-unit>
+            <trans-unit id="labelTranslationLinkPlain" resname="labelTranslationLinkPlain">
+                <source>This text is also available in plain language.</source>
+                <target>Diesen Text gibt es auch in Einfacher Sprache.</target>
             </trans-unit>
             <trans-unit id="labelErrorNewsContent" resname="labelErrorNewsContent">
                 <source>News record you try to translate doesn't have selected content types.</source>

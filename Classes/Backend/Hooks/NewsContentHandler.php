@@ -32,7 +32,7 @@ class NewsContentHandler
         string $targetLanguageType,
         ?int $appendedContentUid,
         bool $showDisclaimer,
-        ?int $linkedNewsUid
+        ?News $linkedRecord
     ): void
     {
         $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
@@ -44,7 +44,7 @@ class NewsContentHandler
             'title' => '(Transformed into '.$targetLanguageType.' language) '. strip_tags($title),
             'teaser' => strip_tags($teaser),
             'bodytext' => $fullBodyText,
-            'tx_mkcontentai_original_news_uid' => $linkedNewsUid ?? $record->getUid(),
+            'tx_mkcontentai_original_news_uid' => $linkedRecord->getUid() ?? $record->getUid(),
             'datetime' => $record->getDatetime()->getTimestamp(),
             'crdate' => time(),
             'tstamp' => time(),
@@ -63,7 +63,7 @@ class NewsContentHandler
         $this->executeDataHandler($dataHandler, $dataMap);
 
         $newUid = $dataHandler->substNEWwithIDs['NEW_1'];
-        $this->updateOriginalRecord($dataHandler, $record, $newUid);
+        $this->updateOriginalRecord($dataHandler, $record, $newUid, $linkedRecord);
     }
 
     private function executeDataHandler(DataHandler $dataHandler, array $map): void
@@ -72,11 +72,11 @@ class NewsContentHandler
         $dataHandler->process_datamap();
     }
 
-    private function updateOriginalRecord(DataHandler $dataHandler, News $record, int $translatedUid): void
+    private function updateOriginalRecord(DataHandler $dataHandler, News $record, int $translatedUid, ?News $linkedRecord): void
     {
         $originalUpdateMap = [
             'tx_news_domain_model_news' => [
-                $record->getUid() => [
+                ($linkedRecord ?? $record)->getUid() => [
                     'tx_mkcontentai_translated_news_uid' => $translatedUid,
                 ]
             ]
