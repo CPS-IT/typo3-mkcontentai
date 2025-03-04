@@ -46,8 +46,8 @@ class NewsContentHandler
             'bodytext' => $fullBodyText,
             'tx_mkcontentai_original_news_uid' => $linkedNewsUid ?? $record->getUid(),
             'datetime' => $record->getDatetime()->getTimestamp(),
-            'crdate' => $record->getDatetime()->getTimestamp(),
-            'tstamp' => $record->getDatetime()->getTimestamp(),
+            'crdate' => time(),
+            'tstamp' => time(),
         ];
 
         if ($appendedContentUid) {
