@@ -44,7 +44,7 @@ class NewsContentHandler
             'title' => '(Transformed into '.$targetLanguageType.' language) '. strip_tags($title),
             'teaser' => strip_tags($teaser),
             'bodytext' => $fullBodyText,
-            'tx_mkcontentai_original_news_uid' => $linkedRecord->getUid() ?? $record->getUid(),
+            'tx_mkcontentai_original_news_uid' => ($linkedRecord ?? $record)->getUid(),
             'datetime' => $record->getDatetime()->getTimestamp(),
             'crdate' => time(),
             'tstamp' => time(),
