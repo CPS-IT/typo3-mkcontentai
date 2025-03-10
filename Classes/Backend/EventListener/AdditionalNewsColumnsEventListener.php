@@ -28,7 +28,8 @@ final class AdditionalNewsColumnsEventListener
         return <<<SQL
 CREATE TABLE tx_news_domain_model_news
 (
-    tx_mkcontentai_original_news_uid int(11) unsigned NOT NULL DEFAULT '0'
+    tx_mkcontentai_original_news_uid int(11) unsigned NOT NULL DEFAULT '0',
+    tx_mkcontentai_translated_news_uid int(11) unsigned NOT NULL DEFAULT '0'
 );
 SQL;
     }
