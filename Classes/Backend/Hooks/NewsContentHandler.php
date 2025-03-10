@@ -50,7 +50,7 @@ class NewsContentHandler
             'tstamp' => time(),
         ];
 
-        if ($appendedContentUid) {
+        if ($appendedContentUid > 0) {
             $newsRecordData['content_elements'] = $appendedContentUid;
         }
 
