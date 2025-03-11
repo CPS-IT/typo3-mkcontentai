@@ -71,39 +71,39 @@ class AiTranslationController extends BaseController
             }
         }
 
-        if($table === 'tx_news_domain_model_news') {
-            $bodyTextToTranslate = $this->aiTranslationService->getNewsContentToTranslate($linkedNewsUid ?? $uid);
-            if (!$bodyTextToTranslate) {
-                return $this->processError('labelErrorNewsContent');
-            }
+        if ($table === 'tx_news_domain_model_news') {
+            $bodyText = $this->aiTranslationService->getNewsContentToTranslate($linkedNewsUid ?? $uid) ?? '';
         } else {
-            $bodyTextToTranslate = $record->getBodytext();
+            $bodyText = $record->getBodytext();
         }
 
         try {
-            if($table === 'tx_news_domain_model_news') {
+            if ($table === 'tx_news_domain_model_news') {
                 $title = ($linkedRecord ?? $record)->getTitle();
                 $teaser = ($linkedRecord ?? $record)->getTeaser();
-                if($title) $translatedTitle = $this->aiTranslationService->getTranslation($title, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
-                if($teaser) $translatedTeaser = $this->aiTranslationService->getTranslation($teaser, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
-                $translatedText = $this->aiTranslationService->getTranslation($bodyTextToTranslate, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
+
+                if ($title) {
+                    $translatedTitle = $this->aiTranslationService->getTranslation($title, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
+                    $title = $translatedTitle->translated_text ?? '';
+                }
+
+                if ($teaser) {
+                    $translatedTeaser = $this->aiTranslationService->getTranslation($teaser, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
+                    $teaser = $translatedTeaser->translated_text ?? '';
+                }
+
+                if ($bodyText) {
+                    $translatedBodyText = $this->aiTranslationService->getTranslation($bodyText, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
+                    $bodyText = $translatedBodyText->translated_text ?? '';
+                }
 
                 $appendedContentUid = $this->aiTranslationService->getSummAiAppendedContentUid();
                 $showDisclaimer = $this->aiTranslationService->getSummAiDisclaimer();
 
-                $this->newsContentHandler->createNewsRecord(
-                    $record,
-                    $translatedTitle->translated_text ?? '',
-                    $translatedTeaser->translated_text ?? '',
-                    $translatedText->translated_text ?? '',
-                    $targetLanguageType,
-                    $appendedContentUid,
-                    $showDisclaimer,
-                    $linkedRecord ?? null
-                );
+                $this->newsContentHandler->createNewsRecord($record, $title, $teaser, $bodyText, $targetLanguageType, $appendedContentUid, $showDisclaimer, $linkedRecord ?? null);
             } else {
-                $translatedText = $this->aiTranslationService->getTranslation($bodyTextToTranslate, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
-                $this->pageContentHandler->copyContentRecord($record->getUid(), $record->getPid(), $translatedText->translated_text, $targetLanguageType);
+                $translatedBodyText = $this->aiTranslationService->getTranslation($bodyText, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
+                $this->pageContentHandler->copyContentRecord($record->getUid(), $record->getPid(), $translatedBodyText->translated_text, $targetLanguageType);
             }
         } catch (\Exception $e) {
             $this->addFlashMessage($e->getMessage(), '', AbstractMessage::ERROR);
