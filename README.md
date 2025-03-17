@@ -76,7 +76,7 @@ The SUMM AI API is now implemented and ready to transform content using tt_conte
 #### News Translation
 SUMM AI is supporting translation of news records. [News extension](https://extensions.typo3.org/extension/news) must be installed and configured to use this feature. The extension is using the same API as described above to translate content types within the news record which were enabled in extension [settings](#settings). 
 
-During translation new News record is created with translated title, teaser and bodytext. Created record must be enabled manually. New added key in tx_news_domain_model_news `tx_mkcontentai_original_news_uid` can then be used to link original news record (e.g. for switch between original and simplified language).
+During translation new News record is created with translated title, teaser and bodytext. Created record must be enabled manually. New added key in tx_news_domain_model_news `tx_mkcontentai_original_news` can then be used to link original news record (e.g. for switch between original and simplified language).
 
 ![](Documentation/Images/SummAiAPI/summ-ai-news-example.png)
 

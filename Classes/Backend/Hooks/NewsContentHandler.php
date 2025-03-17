@@ -44,7 +44,7 @@ class NewsContentHandler
             'title' => '(Transformed into '.$targetLanguageType.' language) '. strip_tags($title),
             'teaser' => strip_tags($teaser),
             'bodytext' => $fullBodyText,
-            'tx_mkcontentai_original_news_uid' => ($linkedRecord ?? $record)->getUid(),
+            'tx_mkcontentai_original_news' => ($linkedRecord ?? $record)->getUid(),
             'datetime' => $record->getDatetime()->getTimestamp(),
             'crdate' => time(),
             'tstamp' => time(),
@@ -77,7 +77,7 @@ class NewsContentHandler
         $originalUpdateMap = [
             'tx_news_domain_model_news' => [
                 ($linkedRecord ?? $record)->getUid() => [
-                    'tx_mkcontentai_translated_news_uid' => $translatedUid,
+                    'tx_mkcontentai_translated_news' => $translatedUid,
                 ]
             ]
         ];

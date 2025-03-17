@@ -3,7 +3,7 @@ if(TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
     TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns(
         'tx_news_domain_model_news',
         [
-            'tx_mkcontentai_original_news_uid' => [
+            'tx_mkcontentai_original_news' => [
                 'exclude' => 0,
                 'label' => 'LLL:EXT:mkcontentai/Resources/Private/Language/locallang_db.xlf:labelOriginalUidFieldTitle',
                 'description' => 'LLL:EXT:mkcontentai/Resources/Private/Language/locallang_db.xlf:labelOriginalUidFieldDescription',
@@ -27,7 +27,7 @@ if(TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
                     ]
                 ]
             ],
-            'tx_mkcontentai_translated_news_uid' => [
+            'tx_mkcontentai_translated_news' => [
                 'exclude' => 0,
                 'label' => 'LLL:EXT:mkcontentai/Resources/Private/Language/locallang_db.xlf:labelTranslatedUidFieldTitle',
                 'description' => 'LLL:EXT:mkcontentai/Resources/Private/Language/locallang_db.xlf:labelTranslatedUidFieldDescription',
@@ -54,7 +54,7 @@ if(TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
         ]
     );
 
-    $newFields = 'tx_mkcontentai_original_news_uid, tx_mkcontentai_translated_news_uid';
+    $newFields = 'tx_mkcontentai_original_news, tx_mkcontentai_translated_news';
     $position = '--div--;MK Content AI,' . $newFields;
 
     TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
