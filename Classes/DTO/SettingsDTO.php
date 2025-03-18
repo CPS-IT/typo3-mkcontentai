@@ -166,6 +166,7 @@ class SettingsDTO
     {
         return $this->availableNewsContentTypes;
     }
+
     public function setAvailableNewsContentTypes(?array $availableNewsContentTypes): void
     {
         $this->availableNewsContentTypes = $availableNewsContentTypes;
