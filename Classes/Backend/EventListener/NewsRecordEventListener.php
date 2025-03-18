@@ -52,7 +52,7 @@ class NewsRecordEventListener
         switch ($this->typo3Version->getMajorVersion()) {
             case 11:
                 $translateContentPlainAction = '
-        <a href='.$uriGenerated.' class="btn btn-default" title="'.$labelActionName.'"><span class="t3js-icon icon icon-size-small icon-state-default">
+        <a href="'.$uriGenerated.'" class="btn btn-default" title="'.$labelActionName.'"><span class="t3js-icon icon icon-size-small icon-state-default">
 	<span class="icon-markup">
 <svg class="icon-color"><use xlink:href="/typo3/sysext/core/Resources/Public/Icons/T3Icons/sprites/actions.svg#actions-translate" /></svg>
 	</span>
