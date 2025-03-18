@@ -119,7 +119,7 @@ class ContentAiTranslationProvider extends AbstractProvider
 
     public function generateUrl(string $itemName): UriInterface
     {
-        $typo3Version = GeneralUtility::makeInstance(Typo3Version::class);
+        $typo3Version = new Typo3Version();
         $majorVersion = $typo3Version->getMajorVersion();
         $parameters = (11 === $majorVersion) ? $this->getParametersForVersion11($itemName) : $this->getParametersForVersion12();
         $pathInfo = $this->getPathInfo($itemName, $majorVersion);
