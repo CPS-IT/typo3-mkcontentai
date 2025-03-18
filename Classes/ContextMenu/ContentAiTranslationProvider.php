@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * Copyright notice
  *
@@ -48,6 +50,20 @@ class ContentAiTranslationProvider extends AbstractProvider
         ],
     ];
 
+    private TtContentRepository $ttContentRepository;
+    private Typo3Version $typo3Version;
+    private UriBuilder $uriBuilder;
+
+    public function __construct(string $table, string $identifier, string $context = '')
+    {
+        parent::__construct($table, $identifier, $context);
+
+        // Use DI once this is supported by TYPO3
+        $this->ttContentRepository = GeneralUtility::makeInstance(TtContentRepository::class);
+        $this->typo3Version = new Typo3Version();
+        $this->uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+    }
+
     public function setContext(string $table, string $identifier, string $context = ''): void
     {
         $this->table = $table;
@@ -85,9 +101,8 @@ class ContentAiTranslationProvider extends AbstractProvider
     public function addItems(array $items): array
     {
         $this->initDisabledItems();
-        $localItems = $this->prepareItems($this->itemsConfiguration);
 
-        return $items + $localItems;
+        return $items + $this->prepareItems($this->itemsConfiguration);
     }
 
     public function getItemsConfiguration(): array
@@ -102,14 +117,11 @@ class ContentAiTranslationProvider extends AbstractProvider
      */
     public function canRender(string $itemName, string $type): bool
     {
-        $canRender = false;
-        $availableActions = ['translateContentEasy', 'translateContentPlain'];
-
-        if (in_array($itemName, $availableActions, true)) {
-            $canRender = $this->isPageContent() && $this->isValidTypeOfRecord((int) $this->identifier);
+        if (in_array($itemName, ['translateContentEasy', 'translateContentPlain'], true)) {
+            return $this->isPageContent() && $this->isValidTypeOfRecord((int) $this->identifier);
         }
 
-        return $canRender;
+        return false;
     }
 
     public function isPageContent(): bool
@@ -119,64 +131,34 @@ class ContentAiTranslationProvider extends AbstractProvider
 
     public function generateUrl(string $itemName): UriInterface
     {
-        $typo3Version = new Typo3Version();
-        $majorVersion = $typo3Version->getMajorVersion();
-        $parameters = (11 === $majorVersion) ? $this->getParametersForVersion11($itemName) : $this->getParametersForVersion12();
-        $pathInfo = $this->getPathInfo($itemName, $majorVersion);
+        $parameters = $this->typo3Version->getMajorVersion() === 11
+            ? $this->getParametersForVersion11($itemName)
+            : $this->getParametersForVersion12();
+        $pathInfo = $this->getPathInfo($itemName);
 
-        $this->updateParametersForItemName($parameters, $itemName, $majorVersion);
-
-        /**
-         * @var UriBuilder $uriBuilder
-         */
-        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-        $extendedUrl = $uriBuilder->buildUriFromRoutePath(
-            $pathInfo,
-            $parameters
-        );
-
-        return $extendedUrl;
+        return $this->uriBuilder->buildUriFromRoutePath($pathInfo, $parameters);
     }
 
     /**
      * @return array<string>
-     *
-     * @throws \TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException
      */
     protected function getAdditionalAttributes(string $itemName): array
     {
-        $typo3Version = GeneralUtility::makeInstance(Typo3Version::class);
-
         $extendUrl = $this->generateUrl($itemName);
 
-        switch ($typo3Version->getMajorVersion()) {
+        switch ($this->typo3Version->getMajorVersion()) {
             case 12:
                 return [
                     'data-callback-module' => '@t3docs/mkcontentai/context-menu-actions',
-                    'data-navigate-uri' => $extendUrl->__toString(),
+                    'data-navigate-uri' => (string) $extendUrl,
                 ];
             case 11:
                 return [
                     'data-callback-module' => 'TYPO3/CMS/Mkcontentai/ContextMenu',
-                    'data-navigate-uri' => $extendUrl->__toString(),
+                    'data-navigate-uri' => (string) $extendUrl,
                 ];
             default:
                 throw new \RuntimeException('TYPO3 version not supported');
-        }
-    }
-
-    /**
-     * @param array<string, mixed> &$parameters
-     */
-    private function updateParametersForItemName(array &$parameters, string $itemName, int $version): void
-    {
-        $actionMapping = [
-            'translateContentEasy' => 'translateContentEasy',
-            'translateContentPlain' => 'translateContentPlain',
-        ];
-
-        if (11 === $version) {
-            $parameters['tx_mkcontentai_system_mkcontentaicontentai']['action'] = $actionMapping[$itemName] ?? '';
         }
     }
 
@@ -185,17 +167,18 @@ class ContentAiTranslationProvider extends AbstractProvider
      */
     private function getParametersForVersion11(string $itemName): array
     {
-        $arrayWithParameters = 'translateContentEasy' === $itemName || 'translateContentPlain' === $itemName ?
-            [
+        if ($itemName === 'translateContentEasy' || $itemName === 'translateContentPlain') {
+            return [
                 'tx_mkcontentai_system_mkcontentaicontentai' => [
                     'controller' => 'AiTranslation',
+                    'action' => $itemName,
                     'uid' => $this->identifier,
                     'table' => $this->table,
                 ],
-            ] :
-            [];
+            ];
+        }
 
-        return $arrayWithParameters;
+        return [];
     }
 
     /**
@@ -206,7 +189,7 @@ class ContentAiTranslationProvider extends AbstractProvider
         return ['uid' => $this->identifier, 'table' => $this->table];
     }
 
-    private function getPathInfo(string $itemName, int $version): string
+    private function getPathInfo(string $itemName): string
     {
         $pathInfoMapping = [
             'translateContentEasy' => [
@@ -219,19 +202,15 @@ class ContentAiTranslationProvider extends AbstractProvider
             ],
         ];
 
-        return $pathInfoMapping[$itemName][$version] ?? '';
+        return $pathInfoMapping[$itemName][$this->typo3Version->getMajorVersion()];
     }
 
     private function isValidTypeOfRecord(int $uid): bool
     {
-        $ttContentRepository = GeneralUtility::makeInstance(TtContentRepository::class);
-
         /** @var TtContent|null $record */
-        $record = $ttContentRepository->findByUid($uid);
-        (null === $record) ? $recordType = '' : $recordType = $record->getCtype();
+        $record = $this->ttContentRepository->findByUid($uid);
+        $recordType = $record === null ? '' : $record->getCtype();
 
-        $availableAction = ['text', 'textpic', 'textmedia'];
-
-        return in_array($recordType, $availableAction);
+        return in_array($recordType, ['text', 'textpic', 'textmedia'], true);
     }
 }
