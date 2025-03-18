@@ -30,11 +30,13 @@ use TYPO3\CMS\Filelist\Event\ProcessFileListActionsEvent;
 
 final class FileListActionsEventListener
 {
-    protected ContentAiItemProvider $contentAiItemProvider;
+    private ContentAiItemProvider $contentAiItemProvider;
+    private PermissionsUtility $permissionsUtility;
     private Typo3Version $typo3Version;
 
-    public function __construct(Typo3Version $typo3Version)
+    public function __construct(PermissionsUtility $permissionsUtility, Typo3Version $typo3Version)
     {
+        $this->permissionsUtility = $permissionsUtility;
         $this->typo3Version = $typo3Version;
 
         if (11 === $this->typo3Version->getMajorVersion()) {
@@ -48,8 +50,7 @@ final class FileListActionsEventListener
 
     public function handleEvent(ProcessFileListActionsEvent $event): void
     {
-        $permissionsUtility = GeneralUtility::makeInstance(PermissionsUtility::class);
-        if (!$permissionsUtility->userHasAccessToImageGenerationPromptButton()) {
+        if (!$this->permissionsUtility->userHasAccessToImageGenerationPromptButton()) {
             return;
         }
 
