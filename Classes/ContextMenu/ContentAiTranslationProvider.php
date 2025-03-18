@@ -105,7 +105,7 @@ class ContentAiTranslationProvider extends AbstractProvider
         $canRender = false;
         $availableActions = ['translateContentEasy', 'translateContentPlain'];
 
-        if (in_array($itemName, $availableActions)) {
+        if (in_array($itemName, $availableActions, true)) {
             $canRender = $this->isPageContent() && $this->isValidTypeOfRecord((int) $this->identifier);
         }
 
