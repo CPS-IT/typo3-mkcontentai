@@ -28,7 +28,6 @@ services:
               event: TYPO3\CMS\Filelist\Event\ProcessFileListActionsEvent
 
     DMK\MkContentAi\Backend\EventListener\NewsRecordEventListener:
-        public: true
         tags:
             - name: event.listener
               method: modifyRecordListActions

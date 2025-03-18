@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace DMK\MkContentAi\Backend\EventListener;
 
 use DMK\MkContentAi\ContextMenu\ContentAiTranslationProvider;
@@ -12,13 +14,15 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Recordlist\Event\ModifyRecordListRecordActionsEvent;
 
-class NewsRecordEventListener
+final class NewsRecordEventListener
 {
-    protected ContentAiTranslationProvider $contentAiTranslationProvider;
+    private ContentAiTranslationProvider $contentAiTranslationProvider;
+    private IconFactory $iconFactory;
     private Typo3Version $typo3Version;
 
-    public function __construct(Typo3Version $typo3Version)
+    public function __construct(IconFactory $iconFactory, Typo3Version $typo3Version)
     {
+        $this->iconFactory = $iconFactory;
         $this->typo3Version = $typo3Version;
 
         if (11 === $this->typo3Version->getMajorVersion()) {
@@ -38,7 +42,7 @@ class NewsRecordEventListener
         if ($currentTable === 'tx_news_domain_model_news' && !$event->hasAction('translateContentPlain') && $permissionsUtility->userHasAccessToTextTranslationPromptButton()) {
             $itemsConfiguration = $this->contentAiTranslationProvider->getItemsConfiguration();
             if(isset($itemsConfiguration['translateContentPlain'])) {
-                $this->contentAiTranslationProvider->setContext($currentTable, $identifier);
+                $this->contentAiTranslationProvider->setContext($currentTable, (string)$identifier);
                 $uriGenerated = $this->contentAiTranslationProvider->generateUrl('translateContentPlain');
                 $labelActionName = LocalizationUtility::translate($itemsConfiguration['translateContentPlain']['label']);
                 $translateContentPlainAction = $this->buildTranslateContentPlainAction($uriGenerated, $labelActionName);
@@ -51,25 +55,20 @@ class NewsRecordEventListener
     {
         switch ($this->typo3Version->getMajorVersion()) {
             case 11:
-                $translateContentPlainAction = '
-        <a href="'.$uriGenerated.'" class="btn btn-default" title="'.$labelActionName.'"><span class="t3js-icon icon icon-size-small icon-state-default">
-	<span class="icon-markup">
-<svg class="icon-color"><use xlink:href="/typo3/sysext/core/Resources/Public/Icons/T3Icons/sprites/actions.svg#actions-translate" /></svg>
-	</span>
-</span></a>';
-
-                return $translateContentPlainAction;
+                return sprintf(
+                    '<a href="%s" class="btn btn-default" title="%s">%s</a>',
+                    $uriGenerated,
+                    $labelActionName,
+                    $this->iconFactory->getIcon('actions-translate', Icon::SIZE_SMALL)->render()
+                );
 
             case 12:
-                $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
-                $translateContentPlainAction = '
-        <a href="'.$uriGenerated.'" class="dropdown-item dropdown-item-spaced"  title="'.$labelActionName.'"><span class="t3js-icon icon icon-size-small icon-state-default icon-actions-translate">
-	<span class="icon-markup">
-	'.$iconFactory->getIcon('actions-translate', Icon::SIZE_SMALL)->getMarkup().'
-	</span>
-</span></a>';
-
-                return $translateContentPlainAction;
+                return sprintf(
+                    '<a href="%s" class="dropdown-item dropdown-item-spaced" title="%s">%s</a>',
+                    $uriGenerated,
+                    $labelActionName,
+                    $this->iconFactory->getIcon('actions-translate', Icon::SIZE_SMALL)->render()
+                );
 
             default:
                 return '';
