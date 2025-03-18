@@ -231,9 +231,7 @@ class SummAiClient extends BaseClient implements ClientInterface
             $registry = $this->getRegistry();
             $class = $this->getClass();
             $registry->set($class, 'newsContentTypes', $newsContentTypes);
-        } catch (\Exception $e) {
-            return;
-        }
+        } catch (\Exception $e) {}
     }
 
     public function getSummAiAppendedContentUid(): ?int
