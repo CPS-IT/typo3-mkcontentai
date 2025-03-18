@@ -63,7 +63,7 @@ class NewsRecordEventListener
             case 12:
                 $iconFactory = GeneralUtility::makeInstance(IconFactory::class);
                 $translateContentPlainAction = '
-        <a href='.$uriGenerated.' class="dropdown-item dropdown-item-spaced"  title="'.$labelActionName.'"><span class="t3js-icon icon icon-size-small icon-state-default icon-actions-translate">
+        <a href="'.$uriGenerated.'" class="dropdown-item dropdown-item-spaced"  title="'.$labelActionName.'"><span class="t3js-icon icon icon-size-small icon-state-default icon-actions-translate">
 	<span class="icon-markup">
 	'.$iconFactory->getIcon('actions-translate', Icon::SIZE_SMALL)->getMarkup().'
 	</span>
