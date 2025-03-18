@@ -190,7 +190,7 @@ class SummAiClient extends BaseClient implements ClientInterface
 
     public function checkEmailFromRequest(?string $summAiUserEmail): string
     {
-        return null === $summAiUserEmail ? $this->getUserEmail() : $summAiUserEmail;
+        return empty($summAiUserEmail) ? $this->getUserEmail() : $summAiUserEmail;
     }
 
     public function checkNewsContentTypesFromRequest(?array $newsContentTypes): array
