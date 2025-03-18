@@ -172,11 +172,13 @@ class SettingsRequestDTO
         $this->selectedSdModel = $selectedSdModel;
     }
 
-    public function getNewsContentTypes(): ?array {
+    public function getNewsContentTypes(): ?array
+    {
         return $this->newsContentTypes;
     }
 
-    public function setNewsContentTypes(?array $newsContentTypes): void {
+    public function setNewsContentTypes(?array $newsContentTypes): void
+    {
         $this->newsContentTypes = $newsContentTypes;
     }
 
