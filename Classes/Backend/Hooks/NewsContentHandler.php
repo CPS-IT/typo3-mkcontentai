@@ -36,7 +36,11 @@ class NewsContentHandler
     ): void
     {
         $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
-        $fullDisclaimer = '<i>' . LocalizationUtility::translate('labelAiDisclaimer', 'mkcontentai') . '</i><br><i>' . LocalizationUtility::translate('labelAiDisclaimer2', 'mkcontentai') . '</i>';
+        $fullDisclaimer = sprintf(
+            '<em>%s</em><br><em>%s</em>',
+            LocalizationUtility::translate('labelAiDisclaimer', 'mkcontentai'),
+            LocalizationUtility::translate('labelAiDisclaimer2', 'mkcontentai')
+        );
         $fullBodyText = $bodyText . ($showDisclaimer ? '<br><br>' . $fullDisclaimer : '');
 
         $newsRecordData = [
