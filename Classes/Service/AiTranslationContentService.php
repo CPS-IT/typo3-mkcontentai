@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace DMK\MkContentAi\Service;
 
+use DMK\MkContentAi\Domain\Model\TtContent;
 use DMK\MkContentAi\Domain\Repository\TtContentRepository;
 use GeorgRinger\News\Domain\Repository\NewsRepository;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -61,13 +62,16 @@ class AiTranslationContentService
     {
         $ttContents = $this->ttContentRepository->findRelatedNews($recordUid);
         $cTypesValid = $this->summAiClient->getNewsContentTypes();
-        $bodytext = null;
+        $bodytext = '';
+
+        /** @var TtContent $ttContent */
         foreach ($ttContents as $ttContent) {
-            if(in_array($ttContent['CType'], $cTypesValid)) {
-                $bodytext .= $ttContent['bodytext'];
+            if (in_array($ttContent->getCtype(), $cTypesValid, true)) {
+                $bodytext .= $ttContent->getBodytext();
             }
         }
-        return $bodytext;
+
+        return $bodytext ?: null;
     }
 
     public function getSummAiAppendedContentUid(): ?int
