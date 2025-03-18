@@ -286,8 +286,8 @@
                             <f:translate
                                 key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelCurrentlyStored"/>
                             News record content types:
-                            <f:for each="{settingsRequestDTO.newsContentTypes}" as="selectedCType">
-                                {selectedCType},
+                            <f:for each="{settingsRequestDTO.newsContentTypes}" as="selectedCType" iteration="iterator">
+                                {selectedCType}{f:if(condition: iterator.isLast, else: ',')}
                             </f:for>
                             <br/>
                             <label>
@@ -305,14 +305,24 @@
                                 <div id="panelsStayOpen-collapseSeven" class="accordion-collapse collapse"
                                      aria-labelledby="panelsStayOpen-headingSeven">
                                     <div class="accordion-body">
-                                        <f:for each="{settingsRequestDTO.availableNewsContentTypes}" as="cTypeNews">
-                                            <div class="form-check">
-                                                <f:form.checkbox property="newsContentTypes"
-                                                                 value="{cTypeNews}"
-                                                                 class="form-check-input"
-                                                                 multiple="1"/>
-                                                <label class="form-check-label">{cTypeNews}</label>
-                                            </div>
+                                        <f:for each="{settingsRequestDTO.availableNewsContentTypes}" as="cTypeNews" iteration="iterator">
+                                            <f:if condition="{cTypeNews} == '--div--'">
+                                                <f:then>
+                                                    <f:if condition="!{iterator.isFirst}">
+                                                        <hr class="border border-bottom-0">
+                                                    </f:if>
+                                                </f:then>
+                                                <f:else>
+                                                    <div class="form-check">
+                                                        <f:form.checkbox property="newsContentTypes"
+                                                                         value="{cTypeNews}"
+                                                                         id="newsContentTypes-{cTypeNews}"
+                                                                         class="form-check-input"
+                                                                         multiple="1" />
+                                                        <label class="form-check-label" for="newsContentTypes-{cTypeNews}">{cTypeNews}</label>
+                                                    </div>
+                                                </f:else>
+                                            </f:if>
                                         </f:for>
                                     </div>
                                 </div>
