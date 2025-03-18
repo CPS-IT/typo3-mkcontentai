@@ -78,7 +78,7 @@ SUMM AI is supporting translation of news records. [News extension](https://exte
 
 During translation new News record is created with translated title, teaser and bodytext. Created record must be enabled manually. New added key in tx_news_domain_model_news `tx_mkcontentai_original_news` can then be used to link original news record (e.g. for switch between original and simplified language).
 
-![](Documentation/Images/SummAiAPI/summ-ai-news-example.png)
+![Backend view for translation of news into easy language](Documentation/Images/SummAiAPI/summ-ai-news-example.png)
 
 ### Settings
 The "Settings" section allows you to configure the AI platforms and APIs that the extension should use, as well as additional options for Stable Diffusion. Specifically, in the "Settings" section, you can:
