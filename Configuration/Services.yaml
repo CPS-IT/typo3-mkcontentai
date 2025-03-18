@@ -30,13 +30,12 @@ services:
     DMK\MkContentAi\Backend\EventListener\NewsRecordEventListener:
         tags:
             - name: event.listener
-              method: modifyRecordListActions
-              event: TYPO3\CMS\Recordlist\Event\ModifyRecordListRecordActionsEvent
+              identifier: 'dmk/mkcontentai/newsRecordEventListener'
 
     DMK\MkContentAi\Backend\EventListener\AdditionalNewsColumnsEventListener:
         tags:
-            -   name: event.listener
-                identifier: 'additionalNewsColumns'
+            - name: event.listener
+              identifier: 'dmk/mkcontentai/additionalNewsColumnsEventListener'
 
     DMK\MkContentAi\Command\AltTextGenerateCommand:
         tags:

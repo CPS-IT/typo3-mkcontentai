@@ -18,11 +18,13 @@ final class NewsRecordEventListener
 {
     private ContentAiTranslationProvider $contentAiTranslationProvider;
     private IconFactory $iconFactory;
+    private PermissionsUtility $permissionsUtility;
     private Typo3Version $typo3Version;
 
-    public function __construct(IconFactory $iconFactory, Typo3Version $typo3Version)
+    public function __construct(IconFactory $iconFactory, PermissionsUtility $permissionsUtility, Typo3Version $typo3Version)
     {
         $this->iconFactory = $iconFactory;
+        $this->permissionsUtility = $permissionsUtility;
         $this->typo3Version = $typo3Version;
 
         if (11 === $this->typo3Version->getMajorVersion()) {
@@ -34,14 +36,18 @@ final class NewsRecordEventListener
         }
     }
 
-    public function modifyRecordListActions(ModifyRecordListRecordActionsEvent $event): void
+    public function __invoke(ModifyRecordListRecordActionsEvent $event): void
     {
         $currentTable = $event->getTable();
         $identifier = $event->getRecord()['uid'];
-        $permissionsUtility = GeneralUtility::makeInstance(PermissionsUtility::class);
-        if ($currentTable === 'tx_news_domain_model_news' && !$event->hasAction('translateContentPlain') && $permissionsUtility->userHasAccessToTextTranslationPromptButton()) {
+
+        if ($currentTable === 'tx_news_domain_model_news' &&
+            !$event->hasAction('translateContentPlain') &&
+            $this->permissionsUtility->userHasAccessToTextTranslationPromptButton()
+        ) {
             $itemsConfiguration = $this->contentAiTranslationProvider->getItemsConfiguration();
-            if(isset($itemsConfiguration['translateContentPlain'])) {
+
+            if (isset($itemsConfiguration['translateContentPlain'])) {
                 $this->contentAiTranslationProvider->setContext($currentTable, (string)$identifier);
                 $uriGenerated = $this->contentAiTranslationProvider->generateUrl('translateContentPlain');
                 $labelActionName = LocalizationUtility::translate($itemsConfiguration['translateContentPlain']['label']);
@@ -75,4 +81,3 @@ final class NewsRecordEventListener
         }
     }
 }
-
