@@ -75,11 +75,11 @@ class ContentAiTranslationProvider extends AbstractProvider
      * }> $items
      *
      * @return array<string, array{
-     * type: string,
-     * label: string,
-     * iconIdentifier: string,
-     * additionalAttributes: array<string,string>,
-     * callbackAction: string
+     *     type: string,
+     *     label: string,
+     *     iconIdentifier: string,
+     *     additionalAttributes: array<string,string>,
+     *     callbackAction: string
      * }>
      */
     public function addItems(array $items): array
