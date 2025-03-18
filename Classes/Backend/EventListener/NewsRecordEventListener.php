@@ -39,11 +39,14 @@ final class NewsRecordEventListener
     public function __invoke(ModifyRecordListRecordActionsEvent $event): void
     {
         $currentTable = $event->getTable();
-        $identifier = $event->getRecord()['uid'];
+        $record = $event->getRecord();
+        $identifier = $record['uid'];
 
-        if ($currentTable === 'tx_news_domain_model_news' &&
-            !$event->hasAction('translateContentPlain') &&
-            $this->permissionsUtility->userHasAccessToTextTranslationPromptButton()
+        if ($currentTable === 'tx_news_domain_model_news'
+            && !$event->hasAction('translateContentPlain')
+            && $this->permissionsUtility->userHasAccessToTextTranslationPromptButton()
+            && (int)($record['tx_mkcontentai_original_news'] ?? 0) <= 0
+            && (int)($record['tx_mkcontentai_translated_news'] ?? 0) <= 0
         ) {
             $itemsConfiguration = $this->contentAiTranslationProvider->getItemsConfiguration();
 
