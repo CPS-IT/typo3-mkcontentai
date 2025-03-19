@@ -10,7 +10,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 /**
  * Add required EXT:news columns to database schema if EXT:news is installed.
  *
- * @author Elias Häußler <elias@haeussler.dev>
+ * @author Elias Häußler <e.haeussler@familie-redlich.de>
  */
 final class AdditionalNewsColumnsEventListener
 {
