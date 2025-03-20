@@ -19,6 +19,7 @@ namespace DMK\MkContentAi\Service;
 
 use DMK\MkContentAi\Domain\Model\TtContent;
 use DMK\MkContentAi\Domain\Repository\TtContentRepository;
+use GeorgRinger\News\Domain\Model\News;
 use GeorgRinger\News\Domain\Repository\NewsRepository;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use DMK\MkContentAi\Http\Client\SummAiClient;
@@ -48,12 +49,12 @@ class AiTranslationContentService
         return $this->summAiClient->getUserEmail();
     }
 
-    public function getRecordToTranslate(int $recordUid)
+    public function getRecordToTranslate(int $recordUid): ?TtContent
     {
         return $this->ttContentRepository->findByUid($recordUid);
     }
 
-    public function getNewsRecordToTranslate(int $recordUid)
+    public function getNewsRecordToTranslate(int $recordUid): ?News
     {
         return $this->newsRepository->findByUid($recordUid);
     }

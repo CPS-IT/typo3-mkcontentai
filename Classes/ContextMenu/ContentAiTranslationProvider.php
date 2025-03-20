@@ -73,7 +73,7 @@ class ContentAiTranslationProvider extends AbstractProvider
 
     public function canHandle(): bool
     {
-        return 'tt_content' === $this->table;
+        return $this->isPageContent();
     }
 
     public function getPriority(): int
@@ -105,15 +105,8 @@ class ContentAiTranslationProvider extends AbstractProvider
         return $items + $this->prepareItems($this->itemsConfiguration);
     }
 
-    public function getItemsConfiguration(): array
-    {
-        return $this->itemsConfiguration;
-    }
-
     /**
      * This method is called for each item this provider adds and checks if given item can be added.
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function canRender(string $itemName, string $type): bool
     {
@@ -124,51 +117,31 @@ class ContentAiTranslationProvider extends AbstractProvider
         return false;
     }
 
-    public function isPageContent(): bool
-    {
-        return 'tt_content' === $this->table;
-    }
-
-    public function generateUrl(string $itemName): UriInterface
-    {
-        $parameters = $this->typo3Version->getMajorVersion() === 11
-            ? $this->getParametersForVersion11($itemName)
-            : $this->getParametersForVersion12();
-        $pathInfo = $this->getPathInfo($itemName);
-
-        return $this->uriBuilder->buildUriFromRoutePath($pathInfo, $parameters);
-    }
-
     /**
-     * @return array<string>
+     * @return array{data-callback-module: string, data-navigate-uri: string}
      */
     protected function getAdditionalAttributes(string $itemName): array
     {
         $extendUrl = $this->generateUrl($itemName);
 
-        switch ($this->typo3Version->getMajorVersion()) {
-            case 12:
-                return [
-                    'data-callback-module' => '@t3docs/mkcontentai/context-menu-actions',
-                    'data-navigate-uri' => (string) $extendUrl,
-                ];
-            case 11:
-                return [
-                    'data-callback-module' => 'TYPO3/CMS/Mkcontentai/ContextMenu',
-                    'data-navigate-uri' => (string) $extendUrl,
-                ];
-            default:
-                throw new \RuntimeException('TYPO3 version not supported');
+        if ($this->typo3Version->getMajorVersion() === 11) {
+            return [
+                'data-callback-module' => 'TYPO3/CMS/Mkcontentai/ContextMenu',
+                'data-navigate-uri' => (string)$extendUrl,
+            ];
         }
+
+        return [
+            'data-callback-module' => '@t3docs/mkcontentai/context-menu-actions',
+            'data-navigate-uri' => (string)$extendUrl,
+        ];
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    private function getParametersForVersion11(string $itemName): array
+    public function generateUrl(string $itemName): UriInterface
     {
-        if ($itemName === 'translateContentEasy' || $itemName === 'translateContentPlain') {
-            return [
+        if ($this->typo3Version->getMajorVersion() === 11) {
+            $routePath = '/module/system/MkcontentaiContentai';
+            $parameters = [
                 'tx_mkcontentai_system_mkcontentaicontentai' => [
                     'controller' => 'AiTranslation',
                     'action' => $itemName,
@@ -176,33 +149,25 @@ class ContentAiTranslationProvider extends AbstractProvider
                     'table' => $this->table,
                 ],
             ];
+        } else {
+            $routePath = '/module/mkcontentai/AiTranslation/' . $itemName;
+            $parameters = [
+                'uid' => $this->identifier,
+                'table' => $this->table,
+            ];
         }
 
-        return [];
+        return $this->uriBuilder->buildUriFromRoutePath($routePath, $parameters);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    private function getParametersForVersion12(): array
+    public function getItemsConfiguration(): array
     {
-        return ['uid' => $this->identifier, 'table' => $this->table];
+        return $this->itemsConfiguration;
     }
 
-    private function getPathInfo(string $itemName): string
+    private function isPageContent(): bool
     {
-        $pathInfoMapping = [
-            'translateContentEasy' => [
-                12 => '/module/mkcontentai/AiTranslation/translateContentEasy',
-                11 => '/module/system/MkcontentaiContentai',
-            ],
-            'translateContentPlain' => [
-                12 => '/module/mkcontentai/AiTranslation/translateContentPlain',
-                11 => '/module/system/MkcontentaiContentai',
-            ],
-        ];
-
-        return $pathInfoMapping[$itemName][$this->typo3Version->getMajorVersion()];
+        return 'tt_content' === $this->table;
     }
 
     private function isValidTypeOfRecord(int $uid): bool

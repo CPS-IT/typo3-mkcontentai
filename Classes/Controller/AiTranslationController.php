@@ -19,7 +19,9 @@ namespace DMK\MkContentAi\Controller;
 
 use DMK\MkContentAi\Backend\Hooks\NewsContentHandler;
 use DMK\MkContentAi\Backend\Hooks\PageContentHandler;
+use DMK\MkContentAi\Domain\Model\TtContent;
 use DMK\MkContentAi\Service\AiTranslationContentService;
+use GeorgRinger\News\Domain\Model\News;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Http\RedirectResponse;
@@ -48,62 +50,30 @@ class AiTranslationController extends BaseController
         return $this->translateContent($uid, $table, $inputTextType, $targetLanguageType, $separator);
     }
 
-    public function translateContentPlainAction(int $uid = 0, string $table = 'tt_content', string $inputTextType = 'html', string $targetLanguageType = 'easy', string $separator = 'hyphen'): ResponseInterface
+    public function translateContentPlainAction(int $uid = 0, string $table = 'tt_content', string $inputTextType = 'plain_text', string $targetLanguageType = 'plain', string $separator = 'hyphen'): ResponseInterface
     {
         return $this->translateContent($uid, $table, $inputTextType, $targetLanguageType, $separator);
     }
 
     private function translateContent(int $uid, string $table, string $inputTextType, string $targetLanguageType, string $separator): ResponseInterface
     {
-        if($table === 'tx_news_domain_model_news') {
-            $record = $this->aiTranslationService->getNewsRecordToTranslate($uid);
-            if(!$record) {
-                return $this->processError('labelErrorRecordAlreadyTranslated');
-            }
-            $linkedNewsUid = $this->aiTranslationService->getNewsInternalLinkUid($uid);
-            if($linkedNewsUid) {
-                $linkedRecord = $this->aiTranslationService->getNewsRecordToTranslate($linkedNewsUid);
-            }
-        } else {
-            $record = $this->aiTranslationService->getRecordToTranslate($uid);
-            if(!$record) {
-                return $this->processError('labelErrorRecordSelected');
-            }
-        }
-
-        if ($table === 'tx_news_domain_model_news') {
-            $bodyText = $this->aiTranslationService->getNewsContentToTranslate($linkedNewsUid ?? $uid) ?? '';
-        } else {
-            $bodyText = $record->getBodytext();
-        }
-
         try {
             if ($table === 'tx_news_domain_model_news') {
-                $title = ($linkedRecord ?? $record)->getTitle();
-                $teaser = ($linkedRecord ?? $record)->getTeaser();
+                $record = $this->aiTranslationService->getNewsRecordToTranslate($uid);
 
-                if ($title) {
-                    $translatedTitle = $this->aiTranslationService->getTranslation($title, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
-                    $title = $translatedTitle->translated_text ?? '';
+                if ($record === null) {
+                    return $this->processError('labelErrorRecordAlreadyTranslated');
                 }
 
-                if ($teaser) {
-                    $translatedTeaser = $this->aiTranslationService->getTranslation($teaser, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
-                    $teaser = $translatedTeaser->translated_text ?? '';
-                }
-
-                if ($bodyText) {
-                    $translatedBodyText = $this->aiTranslationService->getTranslation($bodyText, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
-                    $bodyText = $translatedBodyText->translated_text ?? '';
-                }
-
-                $appendedContentUid = $this->aiTranslationService->getSummAiAppendedContentUid();
-                $showDisclaimer = $this->aiTranslationService->getSummAiDisclaimer();
-
-                $this->newsContentHandler->createNewsRecord($record, $title, $teaser, $bodyText, $targetLanguageType, $appendedContentUid, $showDisclaimer, $linkedRecord ?? null);
+                $this->translateNewsContent($uid, $record, $inputTextType, $targetLanguageType, $separator);
             } else {
-                $translatedBodyText = $this->aiTranslationService->getTranslation($bodyText, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
-                $this->pageContentHandler->copyContentRecord($record->getUid(), $record->getPid(), $translatedBodyText->translated_text, $targetLanguageType);
+                $record = $this->aiTranslationService->getRecordToTranslate($uid);
+
+                if ($record === null) {
+                    return $this->processError('labelErrorRecordSelected');
+                }
+
+                $this->translatePageContent($record, $inputTextType, $targetLanguageType, $separator);
             }
         } catch (\Exception $e) {
             $this->addFlashMessage($e->getMessage(), '', AbstractMessage::ERROR);
@@ -113,6 +83,49 @@ class AiTranslationController extends BaseController
         return $this->buildUrl($record->getPid(), $table);
     }
 
+    private function translateNewsContent(int $uid, News $record, string $inputTextType, string $targetLanguageType, string $separator): void
+    {
+        $linkedNewsUid = $this->aiTranslationService->getNewsInternalLinkUid($uid);
+
+        if ($linkedNewsUid > 0) {
+            $linkedRecord = $this->aiTranslationService->getNewsRecordToTranslate($linkedNewsUid);
+        } else {
+            $linkedRecord = null;
+        }
+
+        $bodyText = $this->aiTranslationService->getNewsContentToTranslate($linkedNewsUid ?? $uid) ?? '';
+        $title = ($linkedRecord ?? $record)->getTitle();
+        $teaser = ($linkedRecord ?? $record)->getTeaser();
+
+        if ($title) {
+            $translatedTitle = $this->aiTranslationService->getTranslation($title, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
+            $title = $translatedTitle->translated_text ?? '';
+        }
+
+        if ($teaser) {
+            $translatedTeaser = $this->aiTranslationService->getTranslation($teaser, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
+            $teaser = $translatedTeaser->translated_text ?? '';
+        }
+
+        if ($bodyText) {
+            $translatedBodyText = $this->aiTranslationService->getTranslation($bodyText, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
+            $bodyText = $translatedBodyText->translated_text ?? '';
+        }
+
+        $appendedContentUid = $this->aiTranslationService->getSummAiAppendedContentUid();
+        $showDisclaimer = $this->aiTranslationService->getSummAiDisclaimer();
+
+        $this->newsContentHandler->createNewsRecord($record, $title, $teaser, $bodyText, $targetLanguageType, $appendedContentUid, $showDisclaimer);
+    }
+
+    private function translatePageContent(TtContent $record, string $inputTextType, string $targetLanguageType, string $separator): void
+    {
+        $bodyText = $record->getBodytext();
+        $translatedBodyText = $this->aiTranslationService->getTranslation($bodyText, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
+
+        $this->pageContentHandler->copyContentRecord($record->getUid(), $record->getPid(), $translatedBodyText->translated_text, $targetLanguageType);
+    }
+
     private function processError(string $msgKey): ResponseInterface
     {
         $response = new ForwardResponse('filelist');
@@ -120,6 +133,7 @@ class AiTranslationController extends BaseController
         $this->addFlashMessage($translatedMessage, '', AbstractMessage::ERROR);
         return $response->withControllerName('AiImage');
     }
+
     private function buildUrl(int $recordPid, $table): ResponseInterface
     {
         $routeName = $table === 'tx_news_domain_model_news' ? 'web_list' : 'web_layout';
@@ -137,6 +151,7 @@ class AiTranslationController extends BaseController
     {
         if (null === $this->moduleTemplateFactory) {
             $translatedMessage = LocalizationUtility::translate('labelErrorModuleTemplateFactory', 'mkcontentai') ?? '';
+
             throw new \Exception($translatedMessage, 1623345720);
         }
 
