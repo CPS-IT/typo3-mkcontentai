@@ -22,7 +22,6 @@ use DMK\MkContentAi\Backend\Hooks\PageContentHandler;
 use DMK\MkContentAi\Domain\Model\TtContent;
 use DMK\MkContentAi\Service\AiTranslationContentService;
 use GeorgRinger\News\Domain\Model\News;
-use GeorgRinger\News\Domain\Model\NewsInternal;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Http\RedirectResponse;
@@ -86,11 +85,7 @@ class AiTranslationController extends BaseController
 
     private function translateNewsContent(int $uid, News $record, string $inputTextType, string $targetLanguageType, string $separator): void
     {
-        if ($record instanceof NewsInternal) {
-            $linkedNewsUid = $this->aiTranslationService->getNewsInternalLinkUid($uid);
-        } else {
-            $linkedNewsUid = null;
-        }
+        $linkedNewsUid = $this->aiTranslationService->getNewsInternalLinkUid($record);
 
         if ($linkedNewsUid > 0) {
             $linkedRecord = $this->aiTranslationService->getNewsRecordToTranslate($linkedNewsUid);
@@ -120,7 +115,7 @@ class AiTranslationController extends BaseController
         $appendedContentUid = $this->aiTranslationService->getSummAiAppendedContentUid();
         $showDisclaimer = $this->aiTranslationService->getSummAiDisclaimer();
 
-        $this->newsContentHandler->createNewsRecord($record, $title, $teaser, $bodyText, $targetLanguageType, $appendedContentUid, $showDisclaimer);
+        $this->newsContentHandler->createNewsRecord($record, $title, $teaser, $bodyText, $targetLanguageType, $appendedContentUid, $showDisclaimer, $linkedRecord);
     }
 
     private function translatePageContent(TtContent $record, string $inputTextType, string $targetLanguageType, string $separator): void

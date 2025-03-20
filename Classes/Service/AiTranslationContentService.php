@@ -20,6 +20,7 @@ namespace DMK\MkContentAi\Service;
 use DMK\MkContentAi\Domain\Model\TtContent;
 use DMK\MkContentAi\Domain\Repository\TtContentRepository;
 use GeorgRinger\News\Domain\Model\News;
+use GeorgRinger\News\Domain\Model\NewsInternal;
 use GeorgRinger\News\Domain\Repository\NewsRepository;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use DMK\MkContentAi\Http\Client\SummAiClient;
@@ -85,10 +86,15 @@ class AiTranslationContentService
         return $this->summAiClient->getSummAiDisclaimer();
     }
 
-    public function getNewsInternalLinkUid(int $uid): ?int
+    public function getNewsInternalLinkUid(News $record): ?int
     {
-        $record = $this->newsRepository->findByUid($uid);
-        $url = $record->getInternalurl();
+        if (!($record instanceof NewsInternal)) {
+            return null;
+        }
+
+        $record = $this->newsRepository->findByUid($record->getUid());
+        $url = $record?->getInternalurl();
+
         if (empty($url)) {
             return null;
         }

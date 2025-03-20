@@ -20,6 +20,7 @@ namespace DMK\MkContentAi\Backend\Hooks;
 use GeorgRinger\News\Domain\Model\News;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class NewsContentHandler
@@ -31,7 +32,8 @@ class NewsContentHandler
         string $bodyText,
         string $targetLanguageType,
         ?int $appendedContentUid,
-        bool $showDisclaimer
+        bool $showDisclaimer,
+        ?News $linkedRecord
     ): void
     {
         $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
@@ -47,7 +49,7 @@ class NewsContentHandler
             'title' => '(Transformed into '.$targetLanguageType.' language) '. strip_tags($title),
             'teaser' => strip_tags($teaser),
             'bodytext' => $fullBodyText,
-            'tx_mkcontentai_original_news' => $record->getUid(),
+            'tx_mkcontentai_original_news' => ($linkedRecord ?? $record)->getUid(),
             'datetime' => $record->getDatetime()->getTimestamp(),
             'crdate' => time(),
             'tstamp' => time(),
@@ -57,28 +59,36 @@ class NewsContentHandler
             $newsRecordData['content_elements'] = $appendedContentUid;
         }
 
+        $newIdentifier = StringUtility::getUniqueId('NEW_');
         $dataMap = [
             'tx_news_domain_model_news' => [
-                'NEW_1' => $newsRecordData,
+                $newIdentifier => $newsRecordData,
             ],
         ];
 
         $this->executeDataHandler($dataHandler, $dataMap);
 
-        $newUid = $dataHandler->substNEWwithIDs['NEW_1'];
+        $newUid = $dataHandler->substNEWwithIDs[$newIdentifier];
+
         $this->updateOriginalRecord($dataHandler, $record, $newUid);
+
+        if ($linkedRecord !== null) {
+            $this->updateOriginalRecord($dataHandler, $linkedRecord, $newUid);
+        }
     }
 
     private function updateOriginalRecord(DataHandler $dataHandler, News $record, int $translatedUid): void
     {
-        $originalUpdateMap = [
-            'tx_news_domain_model_news' => [
-                $record->getUid() => [
-                    'tx_mkcontentai_translated_news' => $translatedUid,
+        $this->executeDataHandler(
+            $dataHandler,
+            [
+                'tx_news_domain_model_news' => [
+                    $record->getUid() => [
+                        'tx_mkcontentai_translated_news' => $translatedUid,
+                    ],
                 ],
-            ],
-        ];
-        $this->executeDataHandler($dataHandler, $originalUpdateMap);
+            ]
+        );
     }
 
     private function executeDataHandler(DataHandler $dataHandler, array $map): void
