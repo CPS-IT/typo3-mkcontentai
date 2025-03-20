@@ -231,8 +231,11 @@
             <trans-unit id="labelSummAiDisclaimer" resname="labelSummAiDisclaimer">
                 <source>Show disclaimer that text was created with AI.</source>
             </trans-unit>
-            <trans-unit id="labelSettingsTextTranslation" resname="labelSettingsTextTranslation">
-                <source>Enable text translation in tt_content and tx_news_domain_model_news fields</source>
+            <trans-unit id="labelSettingsNewsTranslationEasyLanguage" resname="labelSettingsNewsTranslationEasyLanguage">
+                <source>Enable text translation (easy language) in tt_content and tx_news_domain_model_news fields</source>
+            </trans-unit>
+            <trans-unit id="labelSettingsNewsTranslationPlainLanguage" resname="labelSettingsNewsTranslationPlainLanguage">
+                <source>Enable text translation (plain language) in tt_content and tx_news_domain_model_news fields</source>
             </trans-unit>
 		</body>
 	</file>

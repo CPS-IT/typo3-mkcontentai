@@ -52,18 +52,23 @@ class PermissionsUtility
         return true === $GLOBALS['BE_USER']->check('custom_options', 'mkcontentaiSettingsPermissions:tt_contentImagePrompt');
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.Superglobals)
-     */
-    public function userHasAccessToTextTranslationPromptButton(): bool
+    public function userHasAccessToNewsTranslationEasyLanguage(): bool
     {
         if ($this->getUserAspect()) {
             return true;
         }
 
-        return true === $GLOBALS['BE_USER']->check('custom_options', 'mkcontentaiSettingsPermissions:tt_contentTextTranslation');
+        return true === $GLOBALS['BE_USER']->check('custom_options', 'mkcontentaiSettingsPermissions:newsTranslationEasyLanguage');
     }
 
+    public function userHasAccessToNewsTranslationPlainLanguage(): bool
+    {
+        if ($this->getUserAspect()) {
+            return true;
+        }
+
+        return true === $GLOBALS['BE_USER']->check('custom_options', 'mkcontentaiSettingsPermissions:newsTranslationPlainLanguage');
+    }
 
     public function getUserAspect(): bool
     {

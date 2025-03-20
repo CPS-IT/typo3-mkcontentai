@@ -305,9 +305,13 @@
                 <source>Show disclaimer that text was created with AI.</source>
                 <target>Hinweis anzeigen, dass der Text mit KI erstellt wurde.</target>
             </trans-unit>
-            <trans-unit id="labelSettingsTextTranslation" resname="labelSettingsTextTranslation">
-                <source>Enable text translation in tt_content and tx_news_domain_model_news fields</source>
-                <target>Text-Übersetzungen in tt_content und tx_news_domain_model_news Feldern aktivieren</target>
+            <trans-unit id="labelSettingsNewsTranslationEasyLanguage" resname="labelSettingsNewsTranslationEasyLanguage">
+                <source>Enable text translation (easy language) in tt_content and tx_news_domain_model_news fields</source>
+                <target>Text-Übersetzungen (Leichte Sprache) in tt_content und tx_news_domain_model_news Feldern aktivieren</target>
+            </trans-unit>
+            <trans-unit id="labelSettingsNewsTranslationPlainLanguage" resname="labelSettingsNewsTranslationPlainLanguage">
+                <source>Enable text translation (plain language) in tt_content and tx_news_domain_model_news fields</source>
+                <target>Text-Übersetzungen (Einfache Sprache) in tt_content und tx_news_domain_model_news Feldern aktivieren</target>
             </trans-unit>
 		</body>
 	</file>

@@ -6,7 +6,6 @@ namespace DMK\MkContentAi\Backend\EventListener;
 
 use DMK\MkContentAi\ContextMenu\ContentAiTranslationProvider;
 use DMK\MkContentAi\Utility\PermissionsUtility;
-use Psr\Http\Message\UriInterface;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Information\Typo3Version;
@@ -38,49 +37,53 @@ final class NewsRecordEventListener
 
     public function __invoke(ModifyRecordListRecordActionsEvent $event): void
     {
+        $itemsConfiguration = $this->contentAiTranslationProvider->getItemsConfiguration();
         $currentTable = $event->getTable();
         $record = $event->getRecord();
-        $identifier = $record['uid'];
+        $identifier = (int)$record['uid'];
 
-        if ($currentTable === 'tx_news_domain_model_news'
-            && !$event->hasAction('translateContentPlain')
-            && $this->permissionsUtility->userHasAccessToTextTranslationPromptButton()
-            && (int)($record['tx_mkcontentai_original_news'] ?? 0) <= 0
-            && (int)($record['tx_mkcontentai_translated_news'] ?? 0) <= 0
+        // Early return on unsupported table, if news was already processed for translation
+        // or user does not have permission to perform translation
+        if ($currentTable !== 'tx_news_domain_model_news'
+            || (int)($record['tx_mkcontentai_original_news'] ?? 0) > 0
+            || (int)($record['tx_mkcontentai_translated_news'] ?? 0) > 0
         ) {
-            $itemsConfiguration = $this->contentAiTranslationProvider->getItemsConfiguration();
+            return;
+        }
 
-            if (isset($itemsConfiguration['translateContentPlain'])) {
-                $this->contentAiTranslationProvider->setContext($currentTable, (string)$identifier);
-                $uriGenerated = $this->contentAiTranslationProvider->generateUrl('translateContentPlain');
-                $labelActionName = LocalizationUtility::translate($itemsConfiguration['translateContentPlain']['label']);
-                $translateContentPlainAction = $this->buildTranslateContentPlainAction($uriGenerated, $labelActionName);
-                $event->setAction($translateContentPlainAction, 'translateContentPlain', 'secondary');
-            }
+        if (!$event->hasAction('translateContentEasy')
+            && isset($itemsConfiguration['translateContentEasy'])
+            && $this->permissionsUtility->userHasAccessToNewsTranslationEasyLanguage()
+        ) {
+            $actionLink = $this->createAction('translateContentEasy', $identifier, $itemsConfiguration);
+            $event->setAction($actionLink, 'translateContentEasy', 'secondary');
+        }
+
+        if (!$event->hasAction('translateContentPlain')
+            && isset($itemsConfiguration['translateContentPlain'])
+            && $this->permissionsUtility->userHasAccessToNewsTranslationPlainLanguage()
+        ) {
+            $actionLink = $this->createAction('translateContentPlain', $identifier, $itemsConfiguration);
+            $event->setAction($actionLink, 'translateContentPlain', 'secondary');
         }
     }
 
-    private function buildTranslateContentPlainAction(UriInterface $uriGenerated, ?string $labelActionName): string
+    private function createAction(string $action, int $recordIdentifier, array $itemsConfiguration): string
     {
-        switch ($this->typo3Version->getMajorVersion()) {
-            case 11:
-                return sprintf(
-                    '<a href="%s" class="btn btn-default" title="%s">%s</a>',
-                    $uriGenerated,
-                    $labelActionName,
-                    $this->iconFactory->getIcon('actions-translate', Icon::SIZE_SMALL)->render()
-                );
+        $this->contentAiTranslationProvider->setContext('tx_news_domain_model_news', (string)$recordIdentifier);
 
-            case 12:
-                return sprintf(
-                    '<a href="%s" class="dropdown-item dropdown-item-spaced" title="%s">%s</a>',
-                    $uriGenerated,
-                    $labelActionName,
-                    $this->iconFactory->getIcon('actions-translate', Icon::SIZE_SMALL)->render()
-                );
-
-            default:
-                return '';
+        if ($this->typo3Version->getMajorVersion() === 11) {
+            $classNames = 'btn btn-default';
+        } else {
+            $classNames = 'dropdown-item dropdown-item-spaced';
         }
+
+        return sprintf(
+            '<a href="%s" class="%s" title="%s">%s</a>',
+            $this->contentAiTranslationProvider->generateUrl($action),
+            $classNames,
+            LocalizationUtility::translate($itemsConfiguration[$action]['label']),
+            $this->iconFactory->getIcon('actions-translate', Icon::SIZE_SMALL)->render()
+        );
     }
 }
