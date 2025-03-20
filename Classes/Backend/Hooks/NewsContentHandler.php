@@ -31,8 +31,7 @@ class NewsContentHandler
         string $bodyText,
         string $targetLanguageType,
         ?int $appendedContentUid,
-        bool $showDisclaimer,
-        ?News $linkedRecord
+        bool $showDisclaimer
     ): void
     {
         $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
@@ -48,7 +47,7 @@ class NewsContentHandler
             'title' => '(Transformed into '.$targetLanguageType.' language) '. strip_tags($title),
             'teaser' => strip_tags($teaser),
             'bodytext' => $fullBodyText,
-            'tx_mkcontentai_original_news' => ($linkedRecord ?? $record)->getUid(),
+            'tx_mkcontentai_original_news' => $record->getUid(),
             'datetime' => $record->getDatetime()->getTimestamp(),
             'crdate' => time(),
             'tstamp' => time(),
@@ -67,24 +66,24 @@ class NewsContentHandler
         $this->executeDataHandler($dataHandler, $dataMap);
 
         $newUid = $dataHandler->substNEWwithIDs['NEW_1'];
-        $this->updateOriginalRecord($dataHandler, $record, $newUid, $linkedRecord);
+        $this->updateOriginalRecord($dataHandler, $record, $newUid);
+    }
+
+    private function updateOriginalRecord(DataHandler $dataHandler, News $record, int $translatedUid): void
+    {
+        $originalUpdateMap = [
+            'tx_news_domain_model_news' => [
+                $record->getUid() => [
+                    'tx_mkcontentai_translated_news' => $translatedUid,
+                ],
+            ],
+        ];
+        $this->executeDataHandler($dataHandler, $originalUpdateMap);
     }
 
     private function executeDataHandler(DataHandler $dataHandler, array $map): void
     {
         $dataHandler->start($map, []);
         $dataHandler->process_datamap();
-    }
-
-    private function updateOriginalRecord(DataHandler $dataHandler, News $record, int $translatedUid, ?News $linkedRecord): void
-    {
-        $originalUpdateMap = [
-            'tx_news_domain_model_news' => [
-                ($linkedRecord ?? $record)->getUid() => [
-                    'tx_mkcontentai_translated_news' => $translatedUid,
-                ]
-            ]
-        ];
-        $this->executeDataHandler($dataHandler, $originalUpdateMap);
     }
 }
