@@ -45,12 +45,12 @@ class AiTranslationController extends BaseController
         $pageRenderer->addCssFile('EXT:mkcontentai/Resources/Public/Css/base.css');
     }
 
-    public function translateContentEasyAction(int $uid = 0, string $table = 'tt_content', string $inputTextType = 'plain_text', string $targetLanguageType = 'easy', string $separator = 'hyphen'): ResponseInterface
+    public function translateContentEasyAction(int $uid = 0, string $table = 'tt_content', string $inputTextType = 'html', string $targetLanguageType = 'easy', string $separator = 'hyphen'): ResponseInterface
     {
         return $this->translateContent($uid, $table, $inputTextType, $targetLanguageType, $separator);
     }
 
-    public function translateContentPlainAction(int $uid = 0, string $table = 'tt_content', string $inputTextType = 'plain_text', string $targetLanguageType = 'plain', string $separator = 'hyphen'): ResponseInterface
+    public function translateContentPlainAction(int $uid = 0, string $table = 'tt_content', string $inputTextType = 'html', string $targetLanguageType = 'plain', string $separator = 'hyphen'): ResponseInterface
     {
         return $this->translateContent($uid, $table, $inputTextType, $targetLanguageType, $separator);
     }
