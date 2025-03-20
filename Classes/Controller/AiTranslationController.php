@@ -22,6 +22,7 @@ use DMK\MkContentAi\Backend\Hooks\PageContentHandler;
 use DMK\MkContentAi\Domain\Model\TtContent;
 use DMK\MkContentAi\Service\AiTranslationContentService;
 use GeorgRinger\News\Domain\Model\News;
+use GeorgRinger\News\Domain\Model\NewsInternal;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Http\RedirectResponse;
@@ -85,7 +86,11 @@ class AiTranslationController extends BaseController
 
     private function translateNewsContent(int $uid, News $record, string $inputTextType, string $targetLanguageType, string $separator): void
     {
-        $linkedNewsUid = $this->aiTranslationService->getNewsInternalLinkUid($uid);
+        if ($record instanceof NewsInternal) {
+            $linkedNewsUid = $this->aiTranslationService->getNewsInternalLinkUid($uid);
+        } else {
+            $linkedNewsUid = null;
+        }
 
         if ($linkedNewsUid > 0) {
             $linkedRecord = $this->aiTranslationService->getNewsRecordToTranslate($linkedNewsUid);
