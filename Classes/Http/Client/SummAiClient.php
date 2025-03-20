@@ -46,8 +46,7 @@ class SummAiClient extends BaseClient implements ClientInterface
         $this->getSummAiAppendedContentUid();
         $this->getSummAiDevMode();
         $this->getSummAiDisclaimer();
-        $this->getSummAiTranslatedRecordLink();
-        $this->getNewsUrlPath();
+
         $this->client = HttpClient::create();
     }
 
@@ -98,6 +97,7 @@ class SummAiClient extends BaseClient implements ClientInterface
                 'json' => $formData,
             ]
         );
+
         return $this->validateResponse($response->getContent(false));
     }
 
@@ -213,16 +213,12 @@ class SummAiClient extends BaseClient implements ClientInterface
         return null === $summAiDisclaimer ? $this->getSummAiDisclaimer() : $summAiDisclaimer;
     }
 
-    public function checkSummAiTranslatedRecordLinkFromRequest(?bool $summAiTranslatedRecordLink): bool
-    {
-        return null === $summAiTranslatedRecordLink ? $this->getSummAiTranslatedRecordLink() : $summAiTranslatedRecordLink;
-    }
-
     public function getNewsContentTypes(): ?array
     {
         $registry = $this->getRegistry();
         $class = $this->getClass();
-        return ($registry->get($class, 'newsContentTypes')) ?? [];
+
+        return $registry->get($class, 'newsContentTypes') ?? [];
     }
 
     public function setNewsContentTypes(array $newsContentTypes): void
@@ -238,6 +234,7 @@ class SummAiClient extends BaseClient implements ClientInterface
     {
         $registry = $this->getRegistry();
         $class = $this->getClass();
+
         return $registry->get($class, 'summAiAppendedContentUid') ?? -1;
     }
 
@@ -247,15 +244,14 @@ class SummAiClient extends BaseClient implements ClientInterface
             $registry = $this->getRegistry();
             $class = $this->getClass();
             $registry->set($class, 'summAiAppendedContentUid', $summAiAppendedContentUid);
-        } catch (\Exception $e) {
-            return;
-        }
+        } catch (\Exception $e) {}
     }
 
     public function getSummAiDevMode(): bool
     {
         $registry = $this->getRegistry();
         $class = $this->getClass();
+
         return $registry->get($class, 'summAiDevMode') ?? false;
     }
 
@@ -265,15 +261,14 @@ class SummAiClient extends BaseClient implements ClientInterface
             $registry = $this->getRegistry();
             $class = $this->getClass();
             $registry->set($class, 'summAiDevMode', $summAiDevMode);
-        } catch (\Exception $e) {
-            return;
-        }
+        } catch (\Exception $e) {}
     }
 
     public function getSummAiDisclaimer(): bool
     {
         $registry = $this->getRegistry();
         $class = $this->getClass();
+
         return $registry->get($class, 'summAiDisclaimer') ?? true;
     }
 
@@ -283,49 +278,6 @@ class SummAiClient extends BaseClient implements ClientInterface
             $registry = $this->getRegistry();
             $class = $this->getClass();
             $registry->set($class, 'summAiDisclaimer', $summAiDisclaimer);
-        } catch (\Exception $e) {
-            return;
-        }
-    }
-
-    public function getSummAiTranslatedRecordLink(): bool
-    {
-        $registry = $this->getRegistry();
-        $class = $this->getClass();
-        return $registry->get($class, 'summAiTranslatedRecordLink') ?? true;
-    }
-
-    public function setSummAiTranslatedRecordLink(bool $summAiTranslatedRecordLink): void
-    {
-        try {
-            $registry = $this->getRegistry();
-            $class = $this->getClass();
-            $registry->set($class, 'summAiTranslatedRecordLink', $summAiTranslatedRecordLink);
-        } catch (\Exception $e) {
-            return;
-        }
-    }
-
-    public function getNewsUrlPath(): string
-    {
-        $registry = $this->getRegistry();
-        $class = $this->getClass();
-        return $registry->get($class, 'newsUrlPath') ?? '';
-    }
-
-    public function setNewsUrlPath(string $newsUrlPath): void
-    {
-        try {
-            $registry = $this->getRegistry();
-            $class = $this->getClass();
-            $registry->set($class, 'newsUrlPath', $newsUrlPath);
-        } catch (\Exception $e) {
-            return;
-        }
-    }
-
-    public function checkNewsUrlPathFromRequest(?string $getNewsUrlPath)
-    {
-        return null === $getNewsUrlPath ? $this->getNewsUrlPath() : $getNewsUrlPath;
+        } catch (\Exception $e) {}
     }
 }

@@ -78,7 +78,7 @@ class SettingsController extends BaseController
             $settingsRequestDTO->getAvailableNewsContentTypes(),
             $settingsRequestDTO->getSummAiAppendedContentUid(),
             $settingsRequestDTO->getSummAiDevMode(),
-            $settingsRequestDTO->getSummAiDisclaimer(),
+            $settingsRequestDTO->getSummAiDisclaimer()
         );
         /** @var SummAiClient $summAiClient */
         $summAiClient = $summAi->getClient();
@@ -205,5 +205,3 @@ class SettingsController extends BaseController
         return $availableNewsContentTypes;
     }
 }
-
-

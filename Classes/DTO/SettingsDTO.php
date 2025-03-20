@@ -138,7 +138,7 @@ class SettingsDTO
         ?array $availableNewsContentTypes,
         ?int $appendedContentUid,
         ?bool $summAiDevMode,
-        ?bool $summAiDisclaimer,
+        ?bool $summAiDisclaimer
     ): SettingsDTO
     {
         $client = AiClientUtility::createSummAiClient();
@@ -151,12 +151,14 @@ class SettingsDTO
         $settingsDto->setSummAiAppendedContentUid($appendedContentUid);
         $settingsDto->setSummAiDevMode($summAiDevMode);
         $settingsDto->setSummAiDisclaimer($summAiDisclaimer);
+
         return $settingsDto;
     }
     public function getNewsContentTypes(): ?array
     {
         return $this->newsContentTypes;
     }
+
     public function setNewsContentTypes(?array $newsContentTypes): void
     {
         $this->newsContentTypes = $newsContentTypes;
@@ -202,4 +204,3 @@ class SettingsDTO
         $this->summAiDisclaimer = $summAiDisclaimer;
     }
 }
-

@@ -43,7 +43,7 @@ class SettingsRequestDTO
     protected ?bool $summAiDisclaimer = null;
 
     /**
-     * @var array <string, string>|null
+     * @var array<string, string>|null
      */
     protected ?array $altTextAiLanguage = null;
 
@@ -222,4 +222,3 @@ class SettingsRequestDTO
         $this->summAiDisclaimer = $summAiDisclaimer;
     }
 }
-

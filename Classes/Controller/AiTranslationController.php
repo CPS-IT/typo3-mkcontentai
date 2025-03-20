@@ -161,4 +161,3 @@ class AiTranslationController extends BaseController
         return $this->htmlResponse($moduleTemplate->renderContent());
     }
 }
-

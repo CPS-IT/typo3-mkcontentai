@@ -88,13 +88,6 @@ services:
     DMK\MkContentAi\Service\AiTranslationPageContentService:
         public: true
 
-    DMK\MkContentAi\Service\AiTranslationContentService:
-        public: true
-        arguments:
-            $summAiClient: '@DMK\MkContentAi\Http\Client\SummAiClient'
-            $ttContentRepository: '@DMK\MkContentAi\Domain\Repository\TtContentRepository'
-            $newsRepository: '@GeorgRinger\News\Domain\Repository\NewsRepository'
-
     DMK\MkContentAi\Http\Client\Action\AltTextAction:
         public: true
 
@@ -125,4 +118,3 @@ services:
               arguments:
                   $aiImageService: '@DMK\MkContentAi\Service\AiImageService'
         public: true
-

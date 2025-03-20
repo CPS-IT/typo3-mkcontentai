@@ -17,9 +17,7 @@ final class AdditionalNewsColumnsEventListener
     public function __invoke(AlterTableDefinitionStatementsEvent $event): void
     {
         if (ExtensionManagementUtility::isLoaded('news')) {
-            $event->addSqlData(
-                $this->generateNewsSqlData(),
-            );
+            $event->addSqlData($this->generateNewsSqlData());
         }
     }
 

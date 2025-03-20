@@ -54,7 +54,6 @@ class TtContent extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      */
     protected $relatedNews;
 
-
     public function getUid(): int
     {
         return $this->uid;

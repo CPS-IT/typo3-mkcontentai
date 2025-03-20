@@ -19,26 +19,26 @@ namespace DMK\MkContentAi\Domain\Model;
 
 class News extends \GeorgRinger\News\Domain\Model\News
 {
-    protected ?self $txMkcontentaiOriginalNews = null;
-    protected ?self $txMkcontentaiTranslatedNews = null;
+    protected ?News $txMkcontentaiOriginalNews = null;
+    protected ?News $txMkcontentaiTranslatedNews = null;
 
-    public function getTxMkcontentaiOriginalNews(): ?self
+    public function getTxMkcontentaiOriginalNews(): ?News
     {
         return $this->txMkcontentaiOriginalNews;
     }
 
-    public function setTxMkcontentaiOriginalNews(?self $txMkcontentaiOriginalNews): self
+    public function setTxMkcontentaiOriginalNews(?News $txMkcontentaiOriginalNews): News
     {
         $this->txMkcontentaiOriginalNews = $txMkcontentaiOriginalNews;
         return $this;
     }
 
-    public function getTxMkcontentaiTranslatedNews(): ?self
+    public function getTxMkcontentaiTranslatedNews(): ?News
     {
         return $this->txMkcontentaiTranslatedNews;
     }
 
-    public function setTxMkcontentaiTranslatedNews(?self $txMkcontentaiTranslatedNews): self
+    public function setTxMkcontentaiTranslatedNews(?News $txMkcontentaiTranslatedNews): News
     {
         $this->txMkcontentaiTranslatedNews = $txMkcontentaiTranslatedNews;
         return $this;
