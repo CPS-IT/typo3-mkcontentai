@@ -18,18 +18,22 @@ declare(strict_types=1);
 namespace DMK\MkContentAi\Backend\Hooks;
 
 use DMK\MkContentAi\Service\AiAltTextLogsService;
-use TYPO3\CMS\Core\Database\Connection;
+use DMK\MkContentAi\Service\AiTranslationContentService;
+use GeorgRinger\News\Domain\Repository\NewsRepository;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class CustomDataHandler
 {
     private AiAltTextLogsService $altTextLogsService;
+    private AiTranslationContentService $aiTranslationContentService;
     private ConnectionPool $connectionPool;
 
-    public function __construct(AiAltTextLogsService $altTextLogsService, ConnectionPool $connectionPool)
+    public function __construct(AiAltTextLogsService $altTextLogsService, AiTranslationContentService $aiTranslationContentService, ConnectionPool $connectionPool)
     {
         $this->altTextLogsService = $altTextLogsService;
+        $this->aiTranslationContentService = $aiTranslationContentService;
         $this->connectionPool = $connectionPool;
     }
 
@@ -73,35 +77,80 @@ class CustomDataHandler
 
         $queryBuilder = $this->connectionPool->getQueryBuilderForTable('tx_news_domain_model_news');
         $queryBuilder->getRestrictions()->removeAll();
-        $originalNews = $queryBuilder->select('tx_mkcontentai_original_news')
+        $record = $queryBuilder->select('tx_mkcontentai_original_news', 'tx_mkcontentai_translated_news')
             ->from('tx_news_domain_model_news')
             ->where(
-                $queryBuilder->expr()->gt('tx_mkcontentai_original_news', 0),
+                $queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->gt('tx_mkcontentai_original_news', 0),
+                    $queryBuilder->expr()->gt('tx_mkcontentai_translated_news', 0)
+                ),
                 $queryBuilder->expr()->eq('uid', $id)
             )
             ->execute()
-            ->fetchOne();
+            ->fetchNumeric();
 
-        if ($originalNews > 0) {
-            $this->detachTranslationFromOriginalNews($originalNews);
+        if ($record === false) {
+            return;
+        }
+
+        [$original, $translated] = $record;
+
+        // Translation is deleted:
+        //   - Unset translation reference from original linked news
+        //   - Unset translation reference from original news
+        if ($original > 0) {
+            $this->detachTranslationFromOriginalLinkedNews($original);
+            $this->detachTranslationFromOriginalNews($original);
+        }
+
+        // Original is deleted:
+        //   - Unset translation reference from original linked news
+        //   - Delete translation
+        if ($translated > 0) {
+            $this->detachTranslationFromOriginalLinkedNews($id);
+            $this->deleteNewsTranslation($translated);
+        }
+    }
+
+    private function detachTranslationFromOriginalLinkedNews(int $id): void
+    {
+        $newsRepository = GeneralUtility::makeInstance(NewsRepository::class);
+        $news = $newsRepository->findByUid($id);
+
+        if ($news === null) {
+            return;
+        }
+
+        $linkedNewsUid = $this->aiTranslationContentService->getNewsInternalLinkUid($news);
+
+        if ($linkedNewsUid !== null) {
+            $this->detachTranslationFromOriginalNews($linkedNewsUid);
         }
     }
 
     private function detachTranslationFromOriginalNews(int $id): void
     {
-        $connection = $this->connectionPool->getConnectionForTable('tx_news_domain_model_news');
-        $connection->update(
-            'tx_news_domain_model_news',
-            [
-                'tx_mkcontentai_translated_news' => 0,
+        $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
+        $dataHandler->start([
+            'tx_news_domain_model_news' => [
+                $id => [
+                    'tx_mkcontentai_translated_news' => 0,
+                ],
             ],
-            [
-                'uid' => $id,
+        ], []);
+        $dataHandler->process_datamap();
+    }
+
+    private function deleteNewsTranslation(int $id): void
+    {
+        $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
+        $dataHandler->start([], [
+            'tx_news_domain_model_news' => [
+                $id => [
+                    'delete' => 1,
+                ],
             ],
-            [
-                'tx_mkcontentai_translated_news' => Connection::PARAM_INT,
-                'uid' => Connection::PARAM_INT,
-            ]
-        );
+        ]);
+        $dataHandler->process_cmdmap();
     }
 }
