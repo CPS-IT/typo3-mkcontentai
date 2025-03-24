@@ -19,6 +19,10 @@ namespace DMK\MkContentAi\Backend\Hooks;
 
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 
+/**
+ * Add additional EXT:news columns to database queries in record list
+ * to allow further checks in combination with translation to easy or plain language.
+ */
 final class AddColumnsToNewsQueryInRecordListHook
 {
     public function modifyQuery(
@@ -37,6 +41,7 @@ final class AddColumnsToNewsQueryInRecordListHook
         if (!in_array('tx_mkcontentai_original_news', $fields, true)) {
             $queryBuilder->addSelect('tx_mkcontentai_original_news');
         }
+
         if (!in_array('tx_mkcontentai_translated_news', $fields, true)) {
             $queryBuilder->addSelect('tx_mkcontentai_translated_news');
         }

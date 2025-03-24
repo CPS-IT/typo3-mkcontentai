@@ -25,6 +25,9 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class NewsContentHandler
 {
+    /**
+     * Create translated news record from original record.
+     */
     public function createNewsRecord(
         News $record,
         string $title,
@@ -34,8 +37,7 @@ class NewsContentHandler
         ?int $appendedContentUid,
         bool $showDisclaimer,
         ?News $linkedRecord
-    ): void
-    {
+    ): void {
         $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
         $fullDisclaimer = sprintf(
             '<em>%s</em><br><em>%s</em>',
@@ -91,9 +93,9 @@ class NewsContentHandler
         );
     }
 
-    private function executeDataHandler(DataHandler $dataHandler, array $map): void
+    private function executeDataHandler(DataHandler $dataHandler, array $data): void
     {
-        $dataHandler->start($map, []);
+        $dataHandler->start($data, []);
         $dataHandler->process_datamap();
     }
 }

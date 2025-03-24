@@ -77,6 +77,7 @@ class AiTranslationController extends BaseController
             }
         } catch (\Exception $e) {
             $this->addFlashMessage($e->getMessage(), '', AbstractMessage::ERROR);
+
             return $this->handleResponse();
         }
 

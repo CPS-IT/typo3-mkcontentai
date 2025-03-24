@@ -124,8 +124,8 @@ class SettingsController extends BaseController
         $settingsRequestDTO->setAvailableNewsContentTypes($this->extractNewsContentTypes());
         $settingsRequestDTO->setNewsContentTypes($summAiClient->getNewsContentTypes());
         $settingsRequestDTO->setSummAiAppendedContentUid($summAiClient->getSummAiAppendedContentUid());
-        $settingsRequestDTO->setSummAiDevMode($summAiClient->getSummAiDevMode());
-        $settingsRequestDTO->setSummAiDisclaimer($summAiClient->getSummAiDisclaimer());
+        $settingsRequestDTO->setSummAiDevMode($summAiClient->isSummAiDevMode());
+        $settingsRequestDTO->setSummAiDisclaimer($summAiClient->showSummAiDisclaimer());
         try {
             $this->view->assignMultiple(
                 [

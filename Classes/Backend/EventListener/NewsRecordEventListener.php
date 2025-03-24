@@ -26,6 +26,9 @@ use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Recordlist\Event\ModifyRecordListRecordActionsEvent;
 
+/**
+ * Add translate buttons to record list actions if EXT:news is installed.
+ */
 final class NewsRecordEventListener
 {
     private IconFactory $iconFactory;
@@ -71,13 +74,13 @@ final class NewsRecordEventListener
     {
         if (!$event->hasAction($actionName)) {
             $uid = (int)$event->getRecord()['uid'];
-            $markup = $this->createActionMarkup($actionName, $event->getTable(), $uid);
+            $markup = $this->createActionMarkup($actionName, $uid);
 
             $event->setAction($markup, $actionName, 'secondary');
         }
     }
 
-    private function createActionMarkup(string $action, string $table, int $uid): string
+    private function createActionMarkup(string $action, int $uid): string
     {
         if ($this->typo3Version->getMajorVersion() === 11) {
             $classNames = 'btn btn-default';
@@ -86,7 +89,7 @@ final class NewsRecordEventListener
                 'tx_mkcontentai_system_mkcontentaicontentai' => [
                     'controller' => 'AiTranslation',
                     'action' => $action,
-                    'table' => $table,
+                    'table' => 'tx_news_domain_model_news',
                     'uid' => $uid,
                 ],
             ];
@@ -94,7 +97,7 @@ final class NewsRecordEventListener
             $classNames = 'dropdown-item dropdown-item-spaced';
             $routePath = '/module/mkcontentai/AiTranslation/' . $action;
             $parameters = [
-                'table' => $table,
+                'table' => 'tx_news_domain_model_news',
                 'uid' => $uid,
             ];
         }

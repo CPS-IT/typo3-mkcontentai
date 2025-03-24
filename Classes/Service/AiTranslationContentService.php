@@ -83,7 +83,7 @@ class AiTranslationContentService
 
     public function getSummAiDisclaimer(): bool
     {
-        return $this->summAiClient->getSummAiDisclaimer();
+        return $this->summAiClient->showSummAiDisclaimer();
     }
 
     public function getNewsInternalLinkUid(News $record): ?int

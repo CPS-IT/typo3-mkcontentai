@@ -44,8 +44,8 @@ class SummAiClient extends BaseClient implements ClientInterface
         $this->getUserEmail();
         $this->getNewsContentTypes();
         $this->getSummAiAppendedContentUid();
-        $this->getSummAiDevMode();
-        $this->getSummAiDisclaimer();
+        $this->isSummAiDevMode();
+        $this->showSummAiDisclaimer();
 
         $this->client = HttpClient::create();
     }
@@ -98,7 +98,9 @@ class SummAiClient extends BaseClient implements ClientInterface
             ]
         );
 
-        return $this->validateResponse($response->getContent(false));
+        $response = $this->validateResponse($response->getContent(false));
+
+        return $response;
     }
 
     public function getAuthorizationHeader(): string
@@ -129,7 +131,7 @@ class SummAiClient extends BaseClient implements ClientInterface
                 'input_text_type' => $inputTextType,
                 'output_language_level' => $outputLanguageLvl,
                 'separator' => $separator,
-                'is_test' => $this->getSummAiDevMode(),
+                'is_test' => $this->isSummAiDevMode(),
             ];
     }
 
@@ -205,12 +207,12 @@ class SummAiClient extends BaseClient implements ClientInterface
 
     public function checkDevModeFromRequest(?bool $summAiDevMode): bool
     {
-        return null === $summAiDevMode ? $this->getSummAiDevMode() : $summAiDevMode;
+        return null === $summAiDevMode ? $this->isSummAiDevMode() : $summAiDevMode;
     }
 
     public function checkSummAiDisclaimerFromRequest(?bool $summAiDisclaimer): bool
     {
-        return null === $summAiDisclaimer ? $this->getSummAiDisclaimer() : $summAiDisclaimer;
+        return null === $summAiDisclaimer ? $this->showSummAiDisclaimer() : $summAiDisclaimer;
     }
 
     public function getNewsContentTypes(): ?array
@@ -247,7 +249,7 @@ class SummAiClient extends BaseClient implements ClientInterface
         } catch (\Exception $e) {}
     }
 
-    public function getSummAiDevMode(): bool
+    public function isSummAiDevMode(): bool
     {
         $registry = $this->getRegistry();
         $class = $this->getClass();
@@ -264,7 +266,7 @@ class SummAiClient extends BaseClient implements ClientInterface
         } catch (\Exception $e) {}
     }
 
-    public function getSummAiDisclaimer(): bool
+    public function showSummAiDisclaimer(): bool
     {
         $registry = $this->getRegistry();
         $class = $this->getClass();

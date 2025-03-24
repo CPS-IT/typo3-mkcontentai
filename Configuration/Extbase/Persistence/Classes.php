@@ -25,9 +25,6 @@ return [
             'sorting' => [
                 'fieldName' => 'sorting',
             ],
-            'relatedNews' => [
-                'fieldName' => 'tx_news_related_news',
-            ],
         ],
     ],
     DMK\MkContentAi\Domain\Model\AltTextLog::class => [
