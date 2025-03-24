@@ -23,14 +23,14 @@ $typo3Version = GeneralUtility::makeInstance(TYPO3\CMS\Core\Information\Typo3Ver
 
 if (11 == $typo3Version->getMajorVersion()) {
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['Backend\Template\Components\ButtonBar']['getButtonsHook']['ButtonBarHook']
-        = ButtonBarHook::class.'->getButtons';
+    = ButtonBarHook::class.'->getButtons';
 }
 
 $GLOBALS['TYPO3_CONF_VARS']['BE']['ContextMenu']['ItemProviders'][1697195476] =
     DMK\MkContentAi\ContextMenu\ContentAiItemProvider::class;
 
 $GLOBALS['TYPO3_CONF_VARS']['BE']['ContextMenu']['ItemProviders'][1697195577] =
-    DMK\MkContentAi\ContextMenu\ContentAiTranslationProvider::class;
+    DMK\MkContentAi\ContextMenu\ContentAiPageProvider::class;
 
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][TYPO3\CMS\Backend\Form\Element\InputTextElement::class] = [
     'className' => DMK\MkContentAi\Backend\Form\Element\InputTextWithAiAltTextSupportElement::class,
@@ -40,7 +40,13 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][TYPO3\CMS\Core\Resource\Event\Befo
     'className' => DMK\MkContentAi\Backend\EventListener\FileEventListener::class,
 ];
 
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processCmdmapClass'][] = DMK\MkContentAi\Backend\Hooks\CustomDataHandler::class;
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] = DMK\MkContentAi\Backend\Hooks\CustomDataHandler::class;
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS'][TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList::class]['modifyQuery'][] = DMK\MkContentAi\Backend\Hooks\AddColumnsToNewsQueryInRecordListHook::class;
+// Register hooks
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processCmdmapClass'][] =
+    DMK\MkContentAi\Backend\Hooks\CustomDataHandler::class;
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] =
+    DMK\MkContentAi\Backend\Hooks\CustomDataHandler::class;
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS'][TYPO3\CMS\Recordlist\RecordList\DatabaseRecordList::class]['modifyQuery'][] =
+    DMK\MkContentAi\Backend\Hooks\AddColumnsToNewsQueryInRecordListHook::class;
+
+// Register extended EXT:news model
 $GLOBALS['TYPO3_CONF_VARS']['EXT']['news']['classes']['Domain/Model/News']['mkcontentai'] = 'mkcontentai';

@@ -2,88 +2,116 @@
 
 declare(strict_types=1);
 
+/*
+ * Copyright notice
+ *
+ * (c) DMK E-BUSINESS GmbH <dev@dmk-ebusiness.de>
+ * All rights reserved
+ *
+ * This file is part of TYPO3 CMS-based extension "mkcontentai" by DMK E-BUSINESS GmbH.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ */
+
 namespace DMK\MkContentAi\Backend\EventListener;
 
-use DMK\MkContentAi\ContextMenu\ContentAiTranslationProvider;
 use DMK\MkContentAi\Utility\PermissionsUtility;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Information\Typo3Version;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Recordlist\Event\ModifyRecordListRecordActionsEvent;
 
 final class NewsRecordEventListener
 {
-    private ContentAiTranslationProvider $contentAiTranslationProvider;
     private IconFactory $iconFactory;
     private PermissionsUtility $permissionsUtility;
     private Typo3Version $typo3Version;
+    private UriBuilder $uriBuilder;
 
-    public function __construct(IconFactory $iconFactory, PermissionsUtility $permissionsUtility, Typo3Version $typo3Version)
-    {
+    public function __construct(
+        IconFactory $iconFactory,
+        PermissionsUtility $permissionsUtility,
+        Typo3Version $typo3Version,
+        UriBuilder $uriBuilder
+    ) {
         $this->iconFactory = $iconFactory;
         $this->permissionsUtility = $permissionsUtility;
         $this->typo3Version = $typo3Version;
-
-        if (11 === $this->typo3Version->getMajorVersion()) {
-            $this->contentAiTranslationProvider = GeneralUtility::makeInstance(ContentAiTranslationProvider::class, '', '');
-        }
-
-        if (12 === $this->typo3Version->getMajorVersion()) {
-            $this->contentAiTranslationProvider = GeneralUtility::makeInstance(ContentAiTranslationProvider::class);
-        }
+        $this->uriBuilder = $uriBuilder;
     }
 
     public function __invoke(ModifyRecordListRecordActionsEvent $event): void
     {
-        $itemsConfiguration = $this->contentAiTranslationProvider->getItemsConfiguration();
-        $currentTable = $event->getTable();
+        $table = $event->getTable();
         $record = $event->getRecord();
-        $identifier = (int)$record['uid'];
 
-        // Early return on unsupported table, if news was already processed for translation
-        // or user does not have permission to perform translation
-        if ($currentTable !== 'tx_news_domain_model_news'
-            || (int)($record['tx_mkcontentai_original_news'] ?? 0) > 0
-            || (int)($record['tx_mkcontentai_translated_news'] ?? 0) > 0
+        // Early return on unsupported table or if news was already processed for translation
+        if ($table !== 'tx_news_domain_model_news'
+            || $this->hasActiveTranslationReference((int)($record['tx_mkcontentai_original_news'] ?? 0))
+            || $this->hasActiveTranslationReference((int)($record['tx_mkcontentai_translated_news'] ?? 0))
         ) {
             return;
         }
 
-        if (!$event->hasAction('translateContentEasy')
-            && isset($itemsConfiguration['translateContentEasy'])
-            && $this->permissionsUtility->userHasAccessToNewsTranslationEasyLanguage()
-        ) {
-            $actionLink = $this->createAction('translateContentEasy', $identifier, $itemsConfiguration);
-            $event->setAction($actionLink, 'translateContentEasy', 'secondary');
+        if ($this->permissionsUtility->userHasAccessToNewsTranslationEasyLanguage()) {
+            $this->addAction('translateContentEasy', $event);
         }
 
-        if (!$event->hasAction('translateContentPlain')
-            && isset($itemsConfiguration['translateContentPlain'])
-            && $this->permissionsUtility->userHasAccessToNewsTranslationPlainLanguage()
-        ) {
-            $actionLink = $this->createAction('translateContentPlain', $identifier, $itemsConfiguration);
-            $event->setAction($actionLink, 'translateContentPlain', 'secondary');
+        if ($this->permissionsUtility->userHasAccessToNewsTranslationPlainLanguage()) {
+            $this->addAction('translateContentPlain', $event);
         }
     }
 
-    private function createAction(string $action, int $recordIdentifier, array $itemsConfiguration): string
+    private function addAction(string $actionName, ModifyRecordListRecordActionsEvent $event): void
     {
-        $this->contentAiTranslationProvider->setContext('tx_news_domain_model_news', (string)$recordIdentifier);
+        if (!$event->hasAction($actionName)) {
+            $uid = (int)$event->getRecord()['uid'];
+            $markup = $this->createActionMarkup($actionName, $event->getTable(), $uid);
 
+            $event->setAction($markup, $actionName, 'secondary');
+        }
+    }
+
+    private function createActionMarkup(string $action, string $table, int $uid): string
+    {
         if ($this->typo3Version->getMajorVersion() === 11) {
             $classNames = 'btn btn-default';
+            $routePath = '/module/system/MkcontentaiContentai';
+            $parameters = [
+                'tx_mkcontentai_system_mkcontentaicontentai' => [
+                    'controller' => 'AiTranslation',
+                    'action' => $action,
+                    'table' => $table,
+                    'uid' => $uid,
+                ],
+            ];
         } else {
             $classNames = 'dropdown-item dropdown-item-spaced';
+            $routePath = '/module/mkcontentai/AiTranslation/' . $action;
+            $parameters = [
+                'table' => $table,
+                'uid' => $uid,
+            ];
         }
 
         return sprintf(
             '<a href="%s" class="%s" title="%s">%s</a>',
-            $this->contentAiTranslationProvider->generateUrl($action),
+            $this->uriBuilder->buildUriFromRoutePath($routePath, $parameters),
             $classNames,
-            LocalizationUtility::translate($itemsConfiguration[$action]['label']),
+            LocalizationUtility::translate(
+                sprintf('LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelText%s', ucfirst($action))
+            ),
             $this->iconFactory->getIcon('actions-translate', Icon::SIZE_SMALL)->render()
         );
+    }
+
+    private function hasActiveTranslationReference(int $id): bool
+    {
+        return BackendUtility::getRecord('tx_news_domain_model_news', $id) !== null;
     }
 }
