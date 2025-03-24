@@ -12,7 +12,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
  *
  * @author Elias Häußler <e.haeussler@familie-redlich.de>
  */
-final class AdditionalNewsColumnsEventListener
+final class NewsDatabaseSchemaEventListener
 {
     public function __invoke(AlterTableDefinitionStatementsEvent $event): void
     {
