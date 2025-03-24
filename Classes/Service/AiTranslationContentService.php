@@ -22,22 +22,22 @@ use DMK\MkContentAi\Domain\Repository\TtContentRepository;
 use GeorgRinger\News\Domain\Model\News;
 use GeorgRinger\News\Domain\Model\NewsInternal;
 use GeorgRinger\News\Domain\Repository\NewsRepository;
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\DataHandling\SoftReference\TypolinkSoftReferenceParser;
 use DMK\MkContentAi\Http\Client\SummAiClient;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class AiTranslationContentService
 {
-    public SummAiClient $summAiClient;
-    public TtContentRepository $ttContentRepository;
-    public NewsRepository $newsRepository;
+    private SummAiClient $summAiClient;
+    private TtContentRepository $ttContentRepository;
+    private TypolinkSoftReferenceParser $softReferenceParser;
+    private ?NewsRepository $newsRepository = null;
 
-    public function __construct(SummAiClient $summAiClient, TtContentRepository $ttContentRepository, NewsRepository $newsRepository)
+    public function __construct(SummAiClient $summAiClient, TtContentRepository $ttContentRepository, TypolinkSoftReferenceParser $softReferenceParser)
     {
         $this->summAiClient = $summAiClient;
         $this->ttContentRepository = $ttContentRepository;
-        if (ExtensionManagementUtility::isLoaded('news')) {
-            $this->newsRepository = $newsRepository;
-        }
+        $this->softReferenceParser = $softReferenceParser;
     }
 
     public function getTranslation(string $inputText, string $userEmail, string $inputTextType, string $targetLanguageType, string $separator): \stdClass
@@ -57,7 +57,7 @@ class AiTranslationContentService
 
     public function getNewsRecordToTranslate(int $recordUid): ?News
     {
-        return $this->newsRepository->findByUid($recordUid);
+        return $this->getNewsRepository()->findByUid($recordUid);
     }
 
     public function getNewsContentToTranslate(int $recordUid): ?string
@@ -92,17 +92,39 @@ class AiTranslationContentService
             return null;
         }
 
-        $record = $this->newsRepository->findByUid($record->getUid());
+        $record = $this->getNewsRepository()->findByUid($record->getUid());
         $url = $record?->getInternalurl();
 
         if (empty($url)) {
             return null;
         }
-        $parsedUrl = parse_url($url);
-        if (!isset($parsedUrl['query'])) {
+
+        $parserResult = $this->softReferenceParser->parse('tx_news_domain_model_news', 'internalurl', $record->getUid(), $url);
+        $elements = $parserResult->getMatchedElements();
+        $firstElement = reset($elements);
+
+        if ($firstElement === false) {
             return null;
         }
-        parse_str($parsedUrl['query'], $queryString);
-        return (int) $queryString['uid'];
+
+        [$table, $uid] = GeneralUtility::trimExplode(':', $firstElement['subst']['recordRef'] ?? ':', false, 2);
+
+        if (empty($table) || empty($uid) || $table !== 'tx_news_domain_model_news') {
+            return null;
+        }
+
+        return (int) $uid;
+    }
+
+    /**
+     * Create news repository on demand (avoid DI since EXT:news might not be loaded).
+     */
+    private function getNewsRepository(): NewsRepository
+    {
+        if ($this->newsRepository === null) {
+            $this->newsRepository = GeneralUtility::makeInstance(NewsRepository::class);
+        }
+
+        return $this->newsRepository;
     }
 }
