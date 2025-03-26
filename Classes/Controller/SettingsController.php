@@ -24,7 +24,6 @@ use DMK\MkContentAi\Service\SiteLanguageService;
 use DMK\MkContentAi\Utility\PermissionsUtility;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
-use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -46,6 +45,9 @@ class SettingsController extends BaseController
         $this->aiImageService = $aiImageService;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function settingsAction(?SettingsRequestDTO $settingsRequestDTO = null): ResponseInterface
     {
         $settingsRequestDTO = $settingsRequestDTO ?? SettingsRequestDTO::empty();
@@ -196,12 +198,18 @@ class SettingsController extends BaseController
         $summAi->validateClientApiKey();
     }
 
+    /**
+     * @return list<string>
+     *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
     private function extractNewsContentTypes(): array
     {
         $availableNewsContentTypes = [];
         foreach ($GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'] as $cType) {
             $availableNewsContentTypes[] = $cType[1];
         }
+
         return $availableNewsContentTypes;
     }
 }

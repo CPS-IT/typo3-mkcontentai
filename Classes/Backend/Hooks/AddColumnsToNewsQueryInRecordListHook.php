@@ -25,6 +25,14 @@ use TYPO3\CMS\Core\Database\Query\QueryBuilder;
  */
 final class AddColumnsToNewsQueryInRecordListHook
 {
+    /**
+     * @param array<string, mixed> $parameters
+     * @param string[]             $additionalConstraints
+     * @param string[]             $fields
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     */
     public function modifyQuery(
         array $parameters,
         string $table,
@@ -34,7 +42,7 @@ final class AddColumnsToNewsQueryInRecordListHook
         QueryBuilder $queryBuilder
     ): void {
         // Early return if all fields are selected or news table is not queried
-        if ($fields === ['*'] || $table !== 'tx_news_domain_model_news') {
+        if ($fields === ['*'] || 'tx_news_domain_model_news' !== $table) {
             return;
         }
 

@@ -71,7 +71,7 @@ if (TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
     );
 
     $newFields = 'tx_mkcontentai_original_news, tx_mkcontentai_translated_news';
-    $position = '--div--;MK Content AI,' . $newFields;
+    $position = '--div--;MK Content AI,'.$newFields;
 
     TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('tx_news_domain_model_news', $position);
 }

@@ -27,6 +27,8 @@ class NewsContentHandler
 {
     /**
      * Create translated news record from original record.
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function createNewsRecord(
         News $record,
@@ -44,15 +46,15 @@ class NewsContentHandler
             LocalizationUtility::translate('labelAiDisclaimer', 'mkcontentai'),
             LocalizationUtility::translate('labelAiDisclaimer2', 'mkcontentai')
         );
-        $fullBodyText = $bodyText . ($showDisclaimer ? '<br><br>' . $fullDisclaimer : '');
+        $fullBodyText = $bodyText.($showDisclaimer ? '<br><br>'.$fullDisclaimer : '');
 
         $newsRecordData = [
             'pid' => $record->getPid(),
-            'title' => '(Transformed into '.$targetLanguageType.' language) '. strip_tags($title),
+            'title' => '(Transformed into '.$targetLanguageType.' language) '.strip_tags($title),
             'teaser' => strip_tags($teaser),
             'bodytext' => $fullBodyText,
             'tx_mkcontentai_original_news' => ($linkedRecord ?? $record)->getUid(),
-            'datetime' => $record->getDatetime()->getTimestamp(),
+            'datetime' => null !== $record->getDatetime() ? $record->getDatetime()->getTimestamp() : null,
             'crdate' => time(),
             'tstamp' => time(),
         ];
@@ -74,7 +76,7 @@ class NewsContentHandler
 
         $this->updateOriginalRecord($dataHandler, $record, $newUid);
 
-        if ($linkedRecord !== null) {
+        if (null !== $linkedRecord) {
             $this->updateOriginalRecord($dataHandler, $linkedRecord, $newUid);
         }
     }
@@ -93,6 +95,9 @@ class NewsContentHandler
         );
     }
 
+    /**
+     * @param array<string, array<string|int, array<string, mixed>>> $data
+     */
     private function executeDataHandler(DataHandler $dataHandler, array $data): void
     {
         $dataHandler->start($data, []);

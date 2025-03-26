@@ -17,6 +17,9 @@ declare(strict_types=1);
 
 namespace DMK\MkContentAi\Domain\Model;
 
+/**
+ * @SuppressWarnings(PHPMD.LongVariable)
+ */
 class News extends \GeorgRinger\News\Domain\Model\News
 {
     protected ?News $txMkcontentaiOriginalNews = null;
@@ -30,6 +33,7 @@ class News extends \GeorgRinger\News\Domain\Model\News
     public function setTxMkcontentaiOriginalNews(?News $txMkcontentaiOriginalNews): News
     {
         $this->txMkcontentaiOriginalNews = $txMkcontentaiOriginalNews;
+
         return $this;
     }
 
@@ -41,6 +45,7 @@ class News extends \GeorgRinger\News\Domain\Model\News
     public function setTxMkcontentaiTranslatedNews(?News $txMkcontentaiTranslatedNews): News
     {
         $this->txMkcontentaiTranslatedNews = $txMkcontentaiTranslatedNews;
+
         return $this;
     }
 }

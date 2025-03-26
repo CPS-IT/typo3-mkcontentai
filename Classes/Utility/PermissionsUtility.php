@@ -52,6 +52,9 @@ class PermissionsUtility
         return true === $GLOBALS['BE_USER']->check('custom_options', 'mkcontentaiSettingsPermissions:tt_contentImagePrompt');
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
     public function userHasAccessToNewsTranslationEasyLanguage(): bool
     {
         if ($this->getUserAspect()) {
@@ -61,6 +64,9 @@ class PermissionsUtility
         return true === $GLOBALS['BE_USER']->check('custom_options', 'mkcontentaiSettingsPermissions:newsTranslationEasyLanguage');
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.Superglobals)
+     */
     public function userHasAccessToNewsTranslationPlainLanguage(): bool
     {
         if ($this->getUserAspect()) {

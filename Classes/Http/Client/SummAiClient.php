@@ -24,6 +24,10 @@ use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class SummAiClient extends BaseClient implements ClientInterface
 {
     /**
@@ -120,19 +124,25 @@ class SummAiClient extends BaseClient implements ClientInterface
     }
 
     /**
-     * @return array<string,string>
+     * @return array{
+     *     input_text: string,
+     *     user: string,
+     *     input_text_type: string,
+     *     output_language_level: string,
+     *     separator: string,
+     *     is_test: bool,
+     * }
      */
     public function prepareDataRequest(string $inputText, string $userEmail, string $inputTextType, string $outputLanguageLvl, string $separator): array
     {
-        return
-            [
-                'input_text' => $inputText,
-                'user' => $userEmail,
-                'input_text_type' => $inputTextType,
-                'output_language_level' => $outputLanguageLvl,
-                'separator' => $separator,
-                'is_test' => $this->isSummAiDevMode(),
-            ];
+        return [
+            'input_text' => $inputText,
+            'user' => $userEmail,
+            'input_text_type' => $inputTextType,
+            'output_language_level' => $outputLanguageLvl,
+            'separator' => $separator,
+            'is_test' => $this->isSummAiDevMode(),
+        ];
     }
 
     public function setUserEmail(string $userEmail): void
@@ -195,12 +205,17 @@ class SummAiClient extends BaseClient implements ClientInterface
         return empty($summAiUserEmail) ? $this->getUserEmail() : $summAiUserEmail;
     }
 
+    /**
+     * @param list<string>|null $newsContentTypes
+     *
+     * @return list<string>
+     */
     public function checkNewsContentTypesFromRequest(?array $newsContentTypes): array
     {
         return null === $newsContentTypes ? $this->getNewsContentTypes() : $newsContentTypes;
     }
 
-    public function checkAppendedContentUidFromRequest(?int $summAiAppendedContentUid): int
+    public function checkAppendedContentUidFromRequest(?int $summAiAppendedContentUid): ?int
     {
         return null === $summAiAppendedContentUid ? $this->getSummAiAppendedContentUid() : $summAiAppendedContentUid;
     }
@@ -215,7 +230,10 @@ class SummAiClient extends BaseClient implements ClientInterface
         return null === $summAiDisclaimer ? $this->showSummAiDisclaimer() : $summAiDisclaimer;
     }
 
-    public function getNewsContentTypes(): ?array
+    /**
+     * @return list<string>
+     */
+    public function getNewsContentTypes(): array
     {
         $registry = $this->getRegistry();
         $class = $this->getClass();
@@ -223,13 +241,18 @@ class SummAiClient extends BaseClient implements ClientInterface
         return $registry->get($class, 'newsContentTypes') ?? [];
     }
 
+    /**
+     * @param list<string> $newsContentTypes
+     */
     public function setNewsContentTypes(array $newsContentTypes): void
     {
         try {
             $registry = $this->getRegistry();
             $class = $this->getClass();
             $registry->set($class, 'newsContentTypes', $newsContentTypes);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+            return;
+        }
     }
 
     public function getSummAiAppendedContentUid(): ?int
@@ -237,16 +260,18 @@ class SummAiClient extends BaseClient implements ClientInterface
         $registry = $this->getRegistry();
         $class = $this->getClass();
 
-        return $registry->get($class, 'summAiAppendedContentUid') ?? -1;
+        return $registry->get($class, 'summAiAppendedContentUid');
     }
 
-    public function setSummAiAppendedContentUid(int $summAiAppendedContentUid): void
+    public function setSummAiAppendedContentUid(?int $summAiAppendedContentUid): void
     {
         try {
             $registry = $this->getRegistry();
             $class = $this->getClass();
             $registry->set($class, 'summAiAppendedContentUid', $summAiAppendedContentUid);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+            return;
+        }
     }
 
     public function isSummAiDevMode(): bool
@@ -263,7 +288,9 @@ class SummAiClient extends BaseClient implements ClientInterface
             $registry = $this->getRegistry();
             $class = $this->getClass();
             $registry->set($class, 'summAiDevMode', $summAiDevMode);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+            return;
+        }
     }
 
     public function showSummAiDisclaimer(): bool
@@ -280,6 +307,8 @@ class SummAiClient extends BaseClient implements ClientInterface
             $registry = $this->getRegistry();
             $class = $this->getClass();
             $registry->set($class, 'summAiDisclaimer', $summAiDisclaimer);
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+            return;
+        }
     }
 }

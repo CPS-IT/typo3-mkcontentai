@@ -92,9 +92,10 @@ class AiTranslationContentService
             return null;
         }
 
-        $record = $this->getNewsRepository()->findByUid($record->getUid());
+        $uid = (int) $record->getUid();
+        $record = $this->getNewsRepository()->findByUid($uid);
 
-        if ($record === null) {
+        if (null === $record) {
             return null;
         }
 
@@ -104,17 +105,17 @@ class AiTranslationContentService
             return null;
         }
 
-        $parserResult = $this->softReferenceParser->parse('tx_news_domain_model_news', 'internalurl', $record->getUid(), $url);
+        $parserResult = $this->softReferenceParser->parse('tx_news_domain_model_news', 'internalurl', $uid, $url);
         $elements = $parserResult->getMatchedElements();
         $firstElement = reset($elements);
 
-        if ($firstElement === false) {
+        if (false === $firstElement) {
             return null;
         }
 
         [$table, $uid] = GeneralUtility::trimExplode(':', $firstElement['subst']['recordRef'] ?? ':', false, 2);
 
-        if (empty($table) || empty($uid) || $table !== 'tx_news_domain_model_news') {
+        if (empty($table) || empty($uid) || 'tx_news_domain_model_news' !== $table) {
             return null;
         }
 
@@ -126,7 +127,7 @@ class AiTranslationContentService
      */
     private function getNewsRepository(): NewsRepository
     {
-        if ($this->newsRepository === null) {
+        if (null === $this->newsRepository) {
             $this->newsRepository = GeneralUtility::makeInstance(NewsRepository::class);
         }
 

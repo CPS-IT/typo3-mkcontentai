@@ -20,6 +20,9 @@ namespace DMK\MkContentAi\DTO;
 use DMK\MkContentAi\Http\Client\BaseClient;
 use DMK\MkContentAi\Utility\AiClientUtility;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ */
 class SettingsDTO
 {
     private BaseClient $client;
@@ -28,8 +31,14 @@ class SettingsDTO
 
     private ?string $userEmail;
 
+    /**
+     * @var list<string>|null
+     */
     private ?array $newsContentTypes;
 
+    /**
+     * @var list<string>|null
+     */
     private ?array $availableNewsContentTypes;
 
     private ?int $summAiAppendedContentUid;
@@ -131,6 +140,12 @@ class SettingsDTO
         return $settingsDto;
     }
 
+    /**
+     * @param list<string>|null $newsContentTypes
+     * @param list<string>|null $availableNewsContentTypes
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     */
     public static function createSummAiClient(
         ?string $apiKey,
         ?string $userEmail,
@@ -139,8 +154,7 @@ class SettingsDTO
         ?int $appendedContentUid,
         ?bool $summAiDevMode,
         ?bool $summAiDisclaimer
-    ): SettingsDTO
-    {
+    ): SettingsDTO {
         $client = AiClientUtility::createSummAiClient();
         $settingsDto = new SettingsDTO($client);
         $settingsDto->setApiKey($apiKey);
@@ -154,21 +168,34 @@ class SettingsDTO
 
         return $settingsDto;
     }
+
+    /**
+     * @return list<string>|null
+     */
     public function getNewsContentTypes(): ?array
     {
         return $this->newsContentTypes;
     }
 
+    /**
+     * @param list<string>|null $newsContentTypes
+     */
     public function setNewsContentTypes(?array $newsContentTypes): void
     {
         $this->newsContentTypes = $newsContentTypes;
     }
 
+    /**
+     * @return list<string>|null
+     */
     public function getAvailableNewsContentTypes(): ?array
     {
         return $this->availableNewsContentTypes;
     }
 
+    /**
+     * @param list<string>|null $availableNewsContentTypes
+     */
     public function setAvailableNewsContentTypes(?array $availableNewsContentTypes): void
     {
         $this->availableNewsContentTypes = $availableNewsContentTypes;

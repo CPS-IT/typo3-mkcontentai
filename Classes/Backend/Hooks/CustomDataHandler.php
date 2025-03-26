@@ -27,13 +27,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class CustomDataHandler
 {
     private AiAltTextLogsService $altTextLogsService;
-    private AiTranslationContentService $aiTranslationContentService;
+    private AiTranslationContentService $translationService;
     private ConnectionPool $connectionPool;
 
-    public function __construct(AiAltTextLogsService $altTextLogsService, AiTranslationContentService $aiTranslationContentService, ConnectionPool $connectionPool)
+    public function __construct(AiAltTextLogsService $altTextLogsService, AiTranslationContentService $translationService, ConnectionPool $connectionPool)
     {
         $this->altTextLogsService = $altTextLogsService;
-        $this->aiTranslationContentService = $aiTranslationContentService;
+        $this->translationService = $translationService;
         $this->connectionPool = $connectionPool;
     }
 
@@ -67,11 +67,13 @@ class CustomDataHandler
      *
      * This method is called right before the news translation is deleted using DataHandler.
      * It queries the original news and, if found, detaches the translation from it.
+     *
+     * @SuppressWarnings(PHPMD.CamelCaseMethodName)
      */
-    public function processCmdmap_preProcess(string $command, string $table, int $id): void
+    public function processCmdmap_preProcess(string $command, string $table, int $identifier): void
     {
         // We only support deletions of news translations at the moment
-        if ($command !== 'delete' || $table !== 'tx_news_domain_model_news') {
+        if ('delete' !== $command || 'tx_news_domain_model_news' !== $table) {
             return;
         }
 
@@ -84,12 +86,12 @@ class CustomDataHandler
                     $queryBuilder->expr()->gt('tx_mkcontentai_original_news', 0),
                     $queryBuilder->expr()->gt('tx_mkcontentai_translated_news', 0)
                 ),
-                $queryBuilder->expr()->eq('uid', $id)
+                $queryBuilder->expr()->eq('uid', $identifier)
             )
-            ->execute()
+            ->executeQuery()
             ->fetchNumeric();
 
-        if ($record === false) {
+        if (false === $record) {
             return;
         }
 
@@ -107,33 +109,33 @@ class CustomDataHandler
         //   - Unset translation reference from original linked news
         //   - Delete translation
         if ($translated > 0) {
-            $this->detachTranslationFromOriginalLinkedNews($id);
+            $this->detachTranslationFromOriginalLinkedNews($identifier);
             $this->deleteNewsTranslation($translated);
         }
     }
 
-    private function detachTranslationFromOriginalLinkedNews(int $id): void
+    private function detachTranslationFromOriginalLinkedNews(int $identifier): void
     {
         $newsRepository = GeneralUtility::makeInstance(NewsRepository::class);
-        $news = $newsRepository->findByUid($id);
+        $news = $newsRepository->findByUid($identifier);
 
-        if ($news === null) {
+        if (null === $news) {
             return;
         }
 
-        $linkedNewsUid = $this->aiTranslationContentService->getNewsInternalLinkUid($news);
+        $linkedNewsUid = $this->translationService->getNewsInternalLinkUid($news);
 
-        if ($linkedNewsUid !== null) {
+        if (null !== $linkedNewsUid) {
             $this->detachTranslationFromOriginalNews($linkedNewsUid);
         }
     }
 
-    private function detachTranslationFromOriginalNews(int $id): void
+    private function detachTranslationFromOriginalNews(int $identifier): void
     {
         $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
         $dataHandler->start([
             'tx_news_domain_model_news' => [
-                $id => [
+                $identifier => [
                     'tx_mkcontentai_translated_news' => 0,
                 ],
             ],
@@ -141,12 +143,12 @@ class CustomDataHandler
         $dataHandler->process_datamap();
     }
 
-    private function deleteNewsTranslation(int $id): void
+    private function deleteNewsTranslation(int $identifier): void
     {
         $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
         $dataHandler->start([], [
             'tx_news_domain_model_news' => [
-                $id => [
+                $identifier => [
                     'delete' => 1,
                 ],
             ],

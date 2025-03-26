@@ -31,6 +31,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Http\ForwardResponse;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class AiTranslationController extends BaseController
 {
     private AiTranslationContentService $aiTranslationService;
@@ -55,13 +58,16 @@ class AiTranslationController extends BaseController
         return $this->translateContent($uid, $table, $inputTextType, $targetLanguageType, $separator);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ElseExpression)
+     */
     private function translateContent(int $uid, string $table, string $inputTextType, string $targetLanguageType, string $separator): ResponseInterface
     {
         try {
-            if ($table === 'tx_news_domain_model_news') {
+            if ('tx_news_domain_model_news' === $table) {
                 $record = $this->aiTranslationService->getNewsRecordToTranslate($uid);
 
-                if ($record === null) {
+                if (null === $record) {
                     return $this->processError('labelErrorRecordAlreadyTranslated');
                 }
 
@@ -69,7 +75,7 @@ class AiTranslationController extends BaseController
             } else {
                 $record = $this->aiTranslationService->getRecordToTranslate($uid);
 
-                if ($record === null) {
+                if (null === $record) {
                     return $this->processError('labelErrorRecordSelected');
                 }
 
@@ -81,17 +87,16 @@ class AiTranslationController extends BaseController
             return $this->handleResponse();
         }
 
-        return $this->buildUrl($record->getPid(), $table);
+        return $this->buildUrl((int) $record->getPid(), $table);
     }
 
     private function translateNewsContent(int $uid, News $record, string $inputTextType, string $targetLanguageType, string $separator): void
     {
         $linkedNewsUid = $this->aiTranslationService->getNewsInternalLinkUid($record);
+        $linkedRecord = null;
 
         if ($linkedNewsUid > 0) {
             $linkedRecord = $this->aiTranslationService->getNewsRecordToTranslate($linkedNewsUid);
-        } else {
-            $linkedRecord = null;
         }
 
         $bodyText = $this->aiTranslationService->getNewsContentToTranslate($linkedNewsUid ?? $uid) ?? '';
@@ -132,12 +137,13 @@ class AiTranslationController extends BaseController
         $response = new ForwardResponse('filelist');
         $translatedMessage = LocalizationUtility::translate($msgKey, 'mkcontentai') ?? '';
         $this->addFlashMessage($translatedMessage, '', AbstractMessage::ERROR);
+
         return $response->withControllerName('AiImage');
     }
 
-    private function buildUrl(int $recordPid, $table): ResponseInterface
+    private function buildUrl(int $recordPid, string $table): ResponseInterface
     {
-        $routeName = $table === 'tx_news_domain_model_news' ? 'web_list' : 'web_layout';
+        $routeName = 'tx_news_domain_model_news' === $table ? 'web_list' : 'web_layout';
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $recordUrl = $uriBuilder->buildUriFromRoute($routeName, [
             'id' => $recordPid,

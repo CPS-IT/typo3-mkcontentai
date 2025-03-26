@@ -54,9 +54,9 @@ final class NewsRecordEventListener
         $record = $event->getRecord();
 
         // Early return on unsupported table or if news was already processed for translation
-        if ($table !== 'tx_news_domain_model_news'
-            || $this->hasActiveTranslationReference((int)($record['tx_mkcontentai_original_news'] ?? 0))
-            || $this->hasActiveTranslationReference((int)($record['tx_mkcontentai_translated_news'] ?? 0))
+        if ('tx_news_domain_model_news' !== $table
+            || $this->hasActiveTranslationReference((int) ($record['tx_mkcontentai_original_news'] ?? 0))
+            || $this->hasActiveTranslationReference((int) ($record['tx_mkcontentai_translated_news'] ?? 0))
         ) {
             return;
         }
@@ -73,7 +73,7 @@ final class NewsRecordEventListener
     private function addAction(string $actionName, ModifyRecordListRecordActionsEvent $event): void
     {
         if (!$event->hasAction($actionName)) {
-            $uid = (int)$event->getRecord()['uid'];
+            $uid = (int) $event->getRecord()['uid'];
             $markup = $this->createActionMarkup($actionName, $uid);
 
             $event->setAction($markup, $actionName, 'secondary');
@@ -82,7 +82,14 @@ final class NewsRecordEventListener
 
     private function createActionMarkup(string $action, int $uid): string
     {
-        if ($this->typo3Version->getMajorVersion() === 11) {
+        $classNames = 'dropdown-item dropdown-item-spaced';
+        $routePath = '/module/mkcontentai/AiTranslation/'.$action;
+        $parameters = [
+            'table' => 'tx_news_domain_model_news',
+            'uid' => $uid,
+        ];
+
+        if (11 === $this->typo3Version->getMajorVersion()) {
             $classNames = 'btn btn-default';
             $routePath = '/module/system/MkcontentaiContentai';
             $parameters = [
@@ -92,13 +99,6 @@ final class NewsRecordEventListener
                     'table' => 'tx_news_domain_model_news',
                     'uid' => $uid,
                 ],
-            ];
-        } else {
-            $classNames = 'dropdown-item dropdown-item-spaced';
-            $routePath = '/module/mkcontentai/AiTranslation/' . $action;
-            $parameters = [
-                'table' => 'tx_news_domain_model_news',
-                'uid' => $uid,
             ];
         }
 
@@ -113,8 +113,8 @@ final class NewsRecordEventListener
         );
     }
 
-    private function hasActiveTranslationReference(int $id): bool
+    private function hasActiveTranslationReference(int $identifier): bool
     {
-        return BackendUtility::getRecord('tx_news_domain_model_news', $id) !== null;
+        return null !== BackendUtility::getRecord('tx_news_domain_model_news', $identifier);
     }
 }
