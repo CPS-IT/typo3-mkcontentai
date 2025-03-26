@@ -42,6 +42,11 @@ class SummAiClient extends BaseClient implements ClientInterface
     {
         $this->getApiKey();
         $this->getUserEmail();
+        $this->getNewsContentTypes();
+        $this->getSummAiAppendedContentUid();
+        $this->isSummAiDevMode();
+        $this->showSummAiDisclaimer();
+
         $this->client = HttpClient::create();
     }
 
@@ -126,6 +131,7 @@ class SummAiClient extends BaseClient implements ClientInterface
                 'input_text_type' => $inputTextType,
                 'output_language_level' => $outputLanguageLvl,
                 'separator' => $separator,
+                'is_test' => $this->isSummAiDevMode(),
             ];
     }
 
@@ -186,6 +192,94 @@ class SummAiClient extends BaseClient implements ClientInterface
 
     public function checkEmailFromRequest(?string $summAiUserEmail): string
     {
-        return null === $summAiUserEmail ? $this->getUserEmail() : $summAiUserEmail;
+        return empty($summAiUserEmail) ? $this->getUserEmail() : $summAiUserEmail;
+    }
+
+    public function checkNewsContentTypesFromRequest(?array $newsContentTypes): array
+    {
+        return null === $newsContentTypes ? $this->getNewsContentTypes() : $newsContentTypes;
+    }
+
+    public function checkAppendedContentUidFromRequest(?int $summAiAppendedContentUid): int
+    {
+        return null === $summAiAppendedContentUid ? $this->getSummAiAppendedContentUid() : $summAiAppendedContentUid;
+    }
+
+    public function checkDevModeFromRequest(?bool $summAiDevMode): bool
+    {
+        return null === $summAiDevMode ? $this->isSummAiDevMode() : $summAiDevMode;
+    }
+
+    public function checkSummAiDisclaimerFromRequest(?bool $summAiDisclaimer): bool
+    {
+        return null === $summAiDisclaimer ? $this->showSummAiDisclaimer() : $summAiDisclaimer;
+    }
+
+    public function getNewsContentTypes(): ?array
+    {
+        $registry = $this->getRegistry();
+        $class = $this->getClass();
+
+        return $registry->get($class, 'newsContentTypes') ?? [];
+    }
+
+    public function setNewsContentTypes(array $newsContentTypes): void
+    {
+        try {
+            $registry = $this->getRegistry();
+            $class = $this->getClass();
+            $registry->set($class, 'newsContentTypes', $newsContentTypes);
+        } catch (\Exception $e) {}
+    }
+
+    public function getSummAiAppendedContentUid(): ?int
+    {
+        $registry = $this->getRegistry();
+        $class = $this->getClass();
+
+        return $registry->get($class, 'summAiAppendedContentUid') ?? -1;
+    }
+
+    public function setSummAiAppendedContentUid(int $summAiAppendedContentUid): void
+    {
+        try {
+            $registry = $this->getRegistry();
+            $class = $this->getClass();
+            $registry->set($class, 'summAiAppendedContentUid', $summAiAppendedContentUid);
+        } catch (\Exception $e) {}
+    }
+
+    public function isSummAiDevMode(): bool
+    {
+        $registry = $this->getRegistry();
+        $class = $this->getClass();
+
+        return $registry->get($class, 'summAiDevMode') ?? false;
+    }
+
+    public function setSummAiDevMode(bool $summAiDevMode): void
+    {
+        try {
+            $registry = $this->getRegistry();
+            $class = $this->getClass();
+            $registry->set($class, 'summAiDevMode', $summAiDevMode);
+        } catch (\Exception $e) {}
+    }
+
+    public function showSummAiDisclaimer(): bool
+    {
+        $registry = $this->getRegistry();
+        $class = $this->getClass();
+
+        return $registry->get($class, 'summAiDisclaimer') ?? true;
+    }
+
+    public function setSummAiDisclaimer(bool $summAiDisclaimer): void
+    {
+        try {
+            $registry = $this->getRegistry();
+            $class = $this->getClass();
+            $registry->set($class, 'summAiDisclaimer', $summAiDisclaimer);
+        } catch (\Exception $e) {}
     }
 }

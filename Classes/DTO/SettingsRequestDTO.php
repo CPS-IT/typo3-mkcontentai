@@ -36,9 +36,14 @@ class SettingsRequestDTO
     protected ?string $summAiUserEmail = null;
     protected ?string $selectedAltTextAiLanguage = null;
     protected ?string $selectedSdModel = null;
+    protected ?array $newsContentTypes = null;
+    protected ?array $availableNewsContentTypes = null;
+    protected ?int $summAiAppendedContentUid = null;
+    protected ?bool $summAiDevMode = null;
+    protected ?bool $summAiDisclaimer = null;
 
     /**
-     * @var array <string, string>|null
+     * @var array<string, string>|null
      */
     protected ?array $altTextAiLanguage = null;
 
@@ -165,5 +170,55 @@ class SettingsRequestDTO
     public function setSelectedSdModel(?string $selectedSdModel): void
     {
         $this->selectedSdModel = $selectedSdModel;
+    }
+
+    public function getNewsContentTypes(): ?array
+    {
+        return $this->newsContentTypes;
+    }
+
+    public function setNewsContentTypes(?array $newsContentTypes): void
+    {
+        $this->newsContentTypes = $newsContentTypes;
+    }
+
+    public function getAvailableNewsContentTypes(): ?array
+    {
+        return $this->availableNewsContentTypes;
+    }
+
+    public function setAvailableNewsContentTypes(?array $availableNewsContentTypes): void
+    {
+        $this->availableNewsContentTypes = $availableNewsContentTypes;
+    }
+
+    public function getSummAiAppendedContentUid(): ?int
+    {
+        return $this->summAiAppendedContentUid;
+    }
+
+    public function setSummAiAppendedContentUid(?int $summAiAppendedContentUid): void
+    {
+        $this->summAiAppendedContentUid = $summAiAppendedContentUid;
+    }
+
+    public function getSummAiDevMode(): ?bool
+    {
+        return $this->summAiDevMode;
+    }
+
+    public function setSummAiDevMode(?bool $summAiDevMode): void
+    {
+        $this->summAiDevMode = $summAiDevMode;
+    }
+
+    public function getSummAiDisclaimer(): ?bool
+    {
+        return $this->summAiDisclaimer;
+    }
+
+    public function setSummAiDisclaimer(?bool $summAiDisclaimer): void
+    {
+        $this->summAiDisclaimer = $summAiDisclaimer;
     }
 }
