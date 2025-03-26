@@ -93,7 +93,12 @@ class AiTranslationContentService
         }
 
         $record = $this->getNewsRepository()->findByUid($record->getUid());
-        $url = $record?->getInternalurl();
+
+        if ($record === null) {
+            return null;
+        }
+
+        $url = $record->getInternalurl();
 
         if (empty($url)) {
             return null;
