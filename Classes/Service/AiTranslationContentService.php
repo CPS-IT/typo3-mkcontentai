@@ -19,11 +19,11 @@ namespace DMK\MkContentAi\Service;
 
 use DMK\MkContentAi\Domain\Model\TtContent;
 use DMK\MkContentAi\Domain\Repository\TtContentRepository;
+use DMK\MkContentAi\Http\Client\SummAiClient;
 use GeorgRinger\News\Domain\Model\News;
 use GeorgRinger\News\Domain\Model\NewsInternal;
 use GeorgRinger\News\Domain\Repository\NewsRepository;
 use TYPO3\CMS\Core\DataHandling\SoftReference\TypolinkSoftReferenceParser;
-use DMK\MkContentAi\Http\Client\SummAiClient;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class AiTranslationContentService
