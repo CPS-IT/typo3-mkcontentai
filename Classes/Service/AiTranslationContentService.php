@@ -57,7 +57,7 @@ class AiTranslationContentService
 
     public function getNewsRecordToTranslate(int $recordUid): ?News
     {
-        return $this->getNewsRepository()->findByUid($recordUid);
+        return $this->getNewsRepository()->findByUid($recordUid, false);
     }
 
     public function getNewsContentToTranslate(int $recordUid): ?string
@@ -93,7 +93,7 @@ class AiTranslationContentService
         }
 
         $uid = (int) $record->getUid();
-        $record = $this->getNewsRepository()->findByUid($uid);
+        $record = $this->getNewsRepository()->findByUid($uid, false);
 
         if (null === $record) {
             return null;
