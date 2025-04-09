@@ -99,9 +99,14 @@ class AiTranslationController extends BaseController
             $linkedRecord = $this->aiTranslationService->getNewsRecordToTranslate($linkedNewsUid);
         }
 
-        $bodyText = $this->aiTranslationService->getNewsContentToTranslate($linkedNewsUid ?? $uid) ?? '';
         $title = ($linkedRecord ?? $record)->getTitle();
         $teaser = ($linkedRecord ?? $record)->getTeaser();
+        $bodyText = ($linkedRecord ?? $record)->getBodytext();
+        $additionalContent = $this->aiTranslationService->getNewsContentToTranslate($linkedNewsUid ?? $uid) ?? '';
+
+        if ('' !== $additionalContent) {
+            $bodyText .= ' '.$additionalContent;
+        }
 
         if ($title) {
             $translatedTitle = $this->aiTranslationService->getTranslation($title, $this->aiTranslationService->getSummAiUserEmail(), $inputTextType, $targetLanguageType, $separator);
