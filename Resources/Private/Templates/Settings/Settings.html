@@ -245,12 +245,12 @@
                         </p>
 
                         <p class="form-group">
-                            <label class="form-check-label">
+                            <label for="summAiApiValue" class="form-check-label">
                                 <f:translate key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelSet"/>
                                 SUMM AI API
                                 <f:translate key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelKeyValue"/>:
                             </label>
-                            <f:form.textfield class="form-control" property="summAiApiValue" value=""/>
+                            <f:form.textfield class="form-control" property="summAiApiValue" id="summAiApiValue" value=""/>
                         </p>
 
                         <p class="form-group">
@@ -261,17 +261,17 @@
                         </p>
 
                         <p class="form-group">
-                            <label class="form-check-label">
+                            <label for="summAiUserEmail" class="form-check-label">
                                 <f:translate key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelSet"/>
                                 SUMM AI API
                                 <f:translate key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelEmailValue"/>:
                             </label>
-                            <f:form.textfield class="form-control" property="summAiUserEmail" value="" />
+                            <f:form.textfield class="form-control" property="summAiUserEmail" id="summAiUserEmail" value="" />
                         </p>
 
                         <p class="form-group">
-                            <f:form.checkbox class="form-check-input" property="summAiDevMode" value="true" checked="{settingsRequestDTO.summAiDevMode}"/>
-                            <label class="form-check-label">
+                            <f:form.checkbox class="form-check-input" property="summAiDevMode" id="summAiDevMode" value="true" checked="{settingsRequestDTO.summAiDevMode}"/>
+                            <label for="summAiDevMode" class="form-check-label">
                                 <f:translate key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelSummAiDevMode"/>
                             </label>
                         </p>
@@ -281,8 +281,8 @@
                         </h5>
 
                         <p class="form-group">
-                            <f:form.checkbox class="form-check-input" property="summAiDisclaimer" value="true" checked="{settingsRequestDTO.summAiDisclaimer}"/>
-                            <label class="form-check-label">
+                            <f:form.checkbox class="form-check-input" property="summAiDisclaimer" id="summAiDisclaimer" value="true" checked="{settingsRequestDTO.summAiDisclaimer}"/>
+                            <label for="summAiDisclaimer" class="form-check-label">
                                 <f:translate key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelSummAiDisclaimer"/>
                             </label>
                         </p>
@@ -294,11 +294,11 @@
                         </p>
 
                         <p class="form-group">
-                            <label class="form-check-label">
+                            <label for="summAiAppendedContentUid" class="form-check-label">
                                 <f:translate key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelSet"/>
                                 <f:translate key="LLL:EXT:mkcontentai/Resources/Private/Language/locallang_contentai.xlf:labelAppendedContentUidValue"/>:
                             </label>
-                            <f:form.textfield class="form-control" property="summAiAppendedContentUid" type="number" value="" />
+                            <f:form.textfield class="form-control" property="summAiAppendedContentUid" id="summAiAppendedContentUid" type="number" value="" />
                         </p>
 
                         <p class="form-group">
@@ -331,7 +331,7 @@
                                                              id="newsContentTypes-{cTypeNews}"
                                                              class="form-check-input"
                                                              multiple="1" />
-                                            <label class="form-check-label" for="newsContentTypes-{cTypeNews}">{cTypeNews}</label>
+                                            <label for="newsContentTypes-{cTypeNews}" class="form-check-label">{cTypeNews}</label>
                                         </p>
                                     </f:else>
                                 </f:if>
