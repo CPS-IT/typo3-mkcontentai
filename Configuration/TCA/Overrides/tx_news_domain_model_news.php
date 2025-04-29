@@ -26,6 +26,7 @@ if (TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
                 'config' => [
                     'type' => 'group',
                     'allowed' => 'tx_news_domain_model_news',
+                    'foreign_table' => 'tx_news_domain_model_news',
                     'maxitems' => 1,
                     'size' => 1,
                     'readOnly' => true,
@@ -50,6 +51,7 @@ if (TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
                 'config' => [
                     'type' => 'group',
                     'allowed' => 'tx_news_domain_model_news',
+                    'foreign_table' => 'tx_news_domain_model_news',
                     'maxitems' => 1,
                     'size' => 1,
                     'readOnly' => true,
