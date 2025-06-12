@@ -24,8 +24,12 @@ if (TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
                 'label' => 'LLL:EXT:mkcontentai/Resources/Private/Language/locallang_db.xlf:labelOriginalUidFieldTitle',
                 'description' => 'LLL:EXT:mkcontentai/Resources/Private/Language/locallang_db.xlf:labelOriginalUidFieldDescription',
                 'config' => [
-                    'type' => 'inline',
+                    'type' => 'select',
+                    'renderType' => 'selectSingle',
                     'foreign_table' => 'tx_news_domain_model_news',
+                    'items' => [
+                        ['', 0],
+                    ],
                     'maxitems' => 1,
                     'size' => 1,
                     'readOnly' => true,
@@ -37,8 +41,12 @@ if (TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
                 'label' => 'LLL:EXT:mkcontentai/Resources/Private/Language/locallang_db.xlf:labelTranslatedUidFieldTitle',
                 'description' => 'LLL:EXT:mkcontentai/Resources/Private/Language/locallang_db.xlf:labelTranslatedUidFieldDescription',
                 'config' => [
-                    'type' => 'inline',
+                    'type' => 'select',
+                    'renderType' => 'selectSingle',
                     'foreign_table' => 'tx_news_domain_model_news',
+                    'items' => [
+                        ['', 0],
+                    ],
                     'maxitems' => 1,
                     'size' => 1,
                     'readOnly' => true,
@@ -49,7 +57,7 @@ if (TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
     );
 
     $newFields = 'tx_mkcontentai_original_news, tx_mkcontentai_translated_news';
-    $position = '--div--;MK Content AI,'.$newFields;
+    $position = '--div--;MK Content AI,' . $newFields;
 
     TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('tx_news_domain_model_news', $position);
 }

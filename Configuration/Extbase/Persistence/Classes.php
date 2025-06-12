@@ -15,7 +15,7 @@ declare(strict_types=1);
  * of the License, or any later version.
  */
 
-return [
+$ret = [
     DMK\MkContentAi\Domain\Model\TtContent::class => [
         'tableName' => 'tt_content',
         'properties' => [
@@ -56,3 +56,11 @@ return [
         ],
     ],
 ];
+
+if (TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('news')) {
+    $ret[DMK\MkContentAi\Domain\Model\News::class] = [
+        'tableName' => 'tx_news_domain_model_news',
+    ];
+}
+
+return $ret;
