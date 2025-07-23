@@ -25,6 +25,7 @@ use GeorgRinger\News\Domain\Model\News;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Http\RedirectResponse;
+use TYPO3\CMS\Core\LinkHandling\LinkService;
 use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -39,12 +40,15 @@ class AiTranslationController extends BaseController
     private AiTranslationContentService $aiTranslationService;
     private PageContentHandler $pageContentHandler;
     private NewsContentHandler $newsContentHandler;
+    private LinkService $linkService;
 
-    public function __construct(AiTranslationContentService $aiTranslationService, PageContentHandler $pageContentHandler, NewsContentHandler $newsContentHandler, PageRenderer $pageRenderer)
+    public function __construct(AiTranslationContentService $aiTranslationService, PageContentHandler $pageContentHandler, NewsContentHandler $newsContentHandler, LinkService $linkService, PageRenderer $pageRenderer)
     {
         $this->aiTranslationService = $aiTranslationService;
         $this->pageContentHandler = $pageContentHandler;
         $this->newsContentHandler = $newsContentHandler;
+        $this->linkService = $linkService;
+
         $pageRenderer->addCssFile('EXT:mkcontentai/Resources/Public/Css/base.css');
     }
 
@@ -90,19 +94,29 @@ class AiTranslationController extends BaseController
         return $this->buildUrl((int) $record->getPid(), $table);
     }
 
-    private function translateNewsContent(int $uid, News $record, string $inputTextType, string $targetLanguageType, string $separator): void
+    private function translateNewsContent(int $uid, News $record, string $inputTextType, string $targetLanguageType, string $separator): int
     {
         $linkedNewsUid = $this->aiTranslationService->getNewsInternalLinkUid($record);
-        $linkedRecord = null;
 
+        // Translate linked news first before continuing with original record
         if ($linkedNewsUid > 0) {
             $linkedRecord = $this->aiTranslationService->getNewsRecordToTranslate($linkedNewsUid);
+
+            if (null !== $linkedRecord) {
+                $translatedUid = $this->translateNewsContent($linkedNewsUid, $linkedRecord, $inputTextType, $targetLanguageType, $separator);
+
+                // Update reference to translated news in internal url of original news
+                $linkParameters = $this->linkService->resolveByStringRepresentation($record->getInternalurl());
+                $linkParameters['uid'] = $translatedUid;
+                $internalUrlToTranslatedLinkedRecord = $this->linkService->asString($linkParameters);
+                $record->setInternalurl($internalUrlToTranslatedLinkedRecord);
+            }
         }
 
-        $title = ($linkedRecord ?? $record)->getTitle();
-        $teaser = ($linkedRecord ?? $record)->getTeaser();
-        $bodyText = ($linkedRecord ?? $record)->getBodytext();
-        $additionalContent = $this->aiTranslationService->getNewsContentToTranslate($linkedNewsUid ?? $uid) ?? '';
+        $title = $record->getTitle();
+        $teaser = $record->getTeaser();
+        $bodyText = $record->getBodytext();
+        $additionalContent = $this->aiTranslationService->getNewsContentToTranslate($uid) ?? '';
 
         if ('' !== $additionalContent) {
             $bodyText .= ' '.$additionalContent;
@@ -126,7 +140,7 @@ class AiTranslationController extends BaseController
         $appendedContentUid = $this->aiTranslationService->getSummAiAppendedContentUid();
         $showDisclaimer = $this->aiTranslationService->getSummAiDisclaimer();
 
-        $this->newsContentHandler->createNewsRecord($record, $title, $teaser, $bodyText, $targetLanguageType, $appendedContentUid, $showDisclaimer, $linkedRecord);
+        return $this->newsContentHandler->createNewsRecord($record, $title, $teaser, $bodyText, $targetLanguageType, $appendedContentUid, $showDisclaimer);
     }
 
     private function translatePageContent(TtContent $record, string $inputTextType, string $targetLanguageType, string $separator): void

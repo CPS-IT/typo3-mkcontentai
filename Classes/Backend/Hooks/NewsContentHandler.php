@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace DMK\MkContentAi\Backend\Hooks;
 
 use GeorgRinger\News\Domain\Model\News;
+use GeorgRinger\News\Domain\Model\NewsInternal;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
@@ -37,9 +38,8 @@ class NewsContentHandler
         string $bodyText,
         string $targetLanguageType,
         ?int $appendedContentUid,
-        bool $showDisclaimer,
-        ?News $linkedRecord
-    ): void {
+        bool $showDisclaimer
+    ): int {
         $dataHandler = GeneralUtility::makeInstance(DataHandler::class);
         $fullDisclaimer = sprintf(
             '<em>%s</em><br><em>%s</em>',
@@ -50,10 +50,11 @@ class NewsContentHandler
 
         $newsRecordData = [
             'pid' => $record->getPid(),
+            'type' => $record->getType(),
             'title' => '(Transformed into '.$targetLanguageType.' language) '.strip_tags($title),
             'teaser' => strip_tags($teaser),
             'bodytext' => $fullBodyText,
-            'tx_mkcontentai_original_news' => ($linkedRecord ?? $record)->getUid(),
+            'tx_mkcontentai_original_news' => $record->getUid(),
             'datetime' => null !== $record->getDatetime() ? $record->getDatetime()->getTimestamp() : null,
             'crdate' => time(),
             'tstamp' => time(),
@@ -61,6 +62,10 @@ class NewsContentHandler
 
         if ($appendedContentUid > 0) {
             $newsRecordData['content_elements'] = $appendedContentUid;
+        }
+
+        if ($record instanceof NewsInternal) {
+            $newsRecordData['internalurl'] = $record->getInternalUrl();
         }
 
         $newIdentifier = StringUtility::getUniqueId('NEW_');
@@ -76,9 +81,7 @@ class NewsContentHandler
 
         $this->updateOriginalRecord($dataHandler, $record, $newUid);
 
-        if (null !== $linkedRecord) {
-            $this->updateOriginalRecord($dataHandler, $linkedRecord, $newUid);
-        }
+        return $newUid;
     }
 
     private function updateOriginalRecord(DataHandler $dataHandler, News $record, int $translatedUid): void
