@@ -42,6 +42,11 @@ class AiTranslationContentService
 
     public function getTranslation(string $inputText, string $userEmail, string $inputTextType, string $targetLanguageType, string $separator): \stdClass
     {
+        if (mb_strlen($inputText) >= 10000) {
+            $translatedMessage = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('labelErrorTextTooLong', 'mkcontentai') ?? '';
+            throw new \Exception($translatedMessage, 1623345721);
+        }
+
         return $this->summAiClient->sendContentToTranslate($inputText, $userEmail, $inputTextType, $targetLanguageType, $separator);
     }
 
