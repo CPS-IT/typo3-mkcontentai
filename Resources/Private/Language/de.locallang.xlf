@@ -219,8 +219,8 @@
 				<target>Diesen Text gibt es auch in Einfacher Sprache.</target>
 			</trans-unit>
 			<trans-unit id="labelErrorTextTooLong" resname="labelErrorTextTooLong">
-				<source>The text is too long. The translation API cannot process texts with more than 10,000 characters.</source>
-				<target>Der Text ist zu lang. Die Übersetzungs-API kann keine Texte mit mehr als 10.000 Zeichen verarbeiten.</target>
+				<source>The input text is too long. The Summ AI Translation API cannot process texts with more than 10,000 characters.</source>
+				<target>Der Eingabe-Text ist zu lang. Die Summ AI Übersetzungs-API kann keine Texte mit mehr als 10.000 Zeichen verarbeiten.</target>
 			</trans-unit>
 		</body>
 	</file>

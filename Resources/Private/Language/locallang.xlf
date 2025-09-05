@@ -175,7 +175,7 @@
 				<source>This text is also available in plain language.</source>
 			</trans-unit>
 			<trans-unit id="labelErrorTextTooLong" resname="labelErrorTextTooLong">
-				<source>The text is too long. The translation API cannot process texts with more than 10,000 characters.</source>
+				<source>The input text is too long. The Summ AI Translation API cannot process texts with more than 10,000 characters.</source>
 			</trans-unit>
 		</body>
 	</file>
