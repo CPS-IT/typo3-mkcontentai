@@ -25,6 +25,7 @@ use GeorgRinger\News\Domain\Model\NewsInternal;
 use GeorgRinger\News\Domain\Repository\NewsRepository;
 use TYPO3\CMS\Core\DataHandling\SoftReference\TypolinkSoftReferenceParser;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class AiTranslationContentService
 {
@@ -45,7 +46,7 @@ class AiTranslationContentService
     public function getTranslation(string $inputText, string $userEmail, string $inputTextType, string $targetLanguageType, string $separator): \stdClass
     {
         if (mb_strlen($inputText) >= self::MAX_INPUT_TEXT_LENGTH) {
-            $translatedMessage = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('labelErrorTextTooLong', 'mkcontentai') ?? '';
+            $translatedMessage = LocalizationUtility::translate('labelErrorTextTooLong', 'mkcontentai') ?? '';
             throw new \Exception($translatedMessage, 1623345721);
         }
 
