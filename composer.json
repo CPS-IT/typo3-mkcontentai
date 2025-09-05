@@ -30,7 +30,8 @@
         "typo3/cms-extbase": "^11.5 || ^12.4",
         "typo3/cms-recordlist": "^11.5 || ^12.4",
         "orhanerday/open-ai": "^3.5",
-        "symfony/http-client": "^5.4"
+        "symfony/http-client": "^5.4",
+        "ext-mbstring": "*"
     },
     "require-dev": {
         "typo3/testing-framework": "^6.16 || ^7.0 || ^8.0",
