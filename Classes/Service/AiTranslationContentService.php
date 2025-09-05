@@ -28,6 +28,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class AiTranslationContentService
 {
+    private const MAX_INPUT_TEXT_LENGTH = 10000;
+
     private SummAiClient $summAiClient;
     private TtContentRepository $ttContentRepository;
     private TypolinkSoftReferenceParser $softReferenceParser;
@@ -42,7 +44,7 @@ class AiTranslationContentService
 
     public function getTranslation(string $inputText, string $userEmail, string $inputTextType, string $targetLanguageType, string $separator): \stdClass
     {
-        if (mb_strlen($inputText) >= 10000) {
+        if (mb_strlen($inputText) >= self::MAX_INPUT_TEXT_LENGTH) {
             $translatedMessage = \TYPO3\CMS\Extbase\Utility\LocalizationUtility::translate('labelErrorTextTooLong', 'mkcontentai') ?? '';
             throw new \Exception($translatedMessage, 1623345721);
         }
